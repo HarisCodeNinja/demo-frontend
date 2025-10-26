@@ -1,0 +1,21 @@
+export const employeeTableConfigDefaultTableConfigDefault = {
+  employeeId: false,
+  userId: true,
+  employeeUniqueId: true,
+  firstName: true,
+  lastName: true,
+  dateOfBirth: true,
+  gender: true,
+  phoneNumber: true,
+  address: true,
+  personalEmail: true,
+  employmentStartDate: true,
+  employmentEndDate: true,
+  departmentId: true,
+  designationId: true,
+  reportingManagerId: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+};
+export default employeeTableConfigDefaultTableConfigDefault;
