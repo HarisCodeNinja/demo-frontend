@@ -18,11 +18,11 @@ export function DepartmentAttendanceChart({ data }: DepartmentAttendanceChartPro
   const chartConfig = {
     present: {
       label: 'Present',
-      color: '#10b981',
+      color: 'var(--chart-1)',
     },
     absent: {
       label: 'Absent',
-      color: '#ef4444',
+      color: 'var(--chart-2)',
     },
   };
 
@@ -49,8 +49,8 @@ export function DepartmentAttendanceChart({ data }: DepartmentAttendanceChartPro
             <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
-            <Bar dataKey="present" fill={chartConfig.present.color} radius={[8, 8, 0, 0]} />
-            <Bar dataKey="absent" fill={chartConfig.absent.color} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="present" fill="var(--color-present)" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="absent" fill="var(--color-absent)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>

@@ -18,15 +18,15 @@ export function AttendanceTrendChart({ data }: AttendanceTrendChartProps) {
   const chartConfig = {
     Present: {
       label: 'Present',
-      color: '#10b981',
+      color: 'var(--chart-1)',
     },
     Absent: {
       label: 'Absent',
-      color: '#ef4444',
+      color: 'var(--chart-2)',
     },
     Late: {
       label: 'Late',
-      color: '#f59e0b',
+      color: 'var(--chart-3)',
     },
   };
 
@@ -53,25 +53,25 @@ export function AttendanceTrendChart({ data }: AttendanceTrendChartProps) {
             <Line
               type="monotone"
               dataKey="Present"
-              stroke={chartConfig.Present.color}
+              stroke="var(--color-Present)"
               strokeWidth={2}
-              dot={{ fill: chartConfig.Present.color, r: 4 }}
+              dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="Absent"
-              stroke={chartConfig.Absent.color}
+              stroke="var(--color-Absent)"
               strokeWidth={2}
-              dot={{ fill: chartConfig.Absent.color, r: 4 }}
+              dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="Late"
-              stroke={chartConfig.Late.color}
+              stroke="var(--color-Late)"
               strokeWidth={2}
-              dot={{ fill: chartConfig.Late.color, r: 4 }}
+              dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
           </LineChart>

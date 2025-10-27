@@ -7,20 +7,26 @@ interface LeaveTypeChartProps {
   data: LeaveTypeDistribution[];
 }
 
-// Define vibrant colors for better visibility
-const COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#10b981', '#ef4444'];
+// Use theme color variables
+const THEME_COLORS = [
+  'var(--chart-1)',
+  'var(--chart-2)',
+  'var(--chart-3)',
+  'var(--chart-4)',
+  'var(--chart-5)',
+];
 
 export function LeaveTypeChart({ data }: LeaveTypeChartProps) {
   const chartData = data.map((item, index) => ({
     leaveType: item.typeName,
     count: Number(item.count),
-    fill: COLORS[index % COLORS.length],
+    fill: THEME_COLORS[index % THEME_COLORS.length],
   }));
 
   const chartConfig = data.reduce((acc, item, index) => {
     acc[item.typeName] = {
       label: item.typeName,
-      color: COLORS[index % COLORS.length],
+      color: THEME_COLORS[index % THEME_COLORS.length],
     };
     return acc;
   }, {} as any);

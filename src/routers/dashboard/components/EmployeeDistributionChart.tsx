@@ -16,7 +16,7 @@ export function EmployeeDistributionChart({ data }: EmployeeDistributionChartPro
   const chartConfig = {
     employees: {
       label: 'Employees',
-      color: '#8b5cf6',
+      color: 'var(--chart-1)',
     },
   };
 
@@ -42,7 +42,7 @@ export function EmployeeDistributionChart({ data }: EmployeeDistributionChartPro
             />
             <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="employees" fill={chartConfig.employees.color} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="employees" fill="var(--color-employees)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
