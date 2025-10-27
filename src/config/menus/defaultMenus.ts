@@ -8,6 +8,12 @@ export const authMenus : MenuItem[] = [
 	scope: []}]
 export const defaultMenus : MenuItem[] = [
     {
+        key: "/",
+        label: "Dashboard",
+        scope: ["user:admin", "user:hr", "user:manager", "user:employee"],
+        icon: LucideIcons.LayoutDashboard
+    },
+    {
         key: "/users",
         label: "Users",
         scope: ["user:admin", "user:hr"]

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +23,7 @@ import {
   Award,
   AlertCircle,
 } from 'lucide-react';
+import { useAppSelector } from '@/store';
 
 import { getAllDashboardData } from '../dashboard/service';
 import { StatsCard } from '../dashboard/components/StatsCard';
@@ -32,6 +34,9 @@ import { MonthlyLeaveChart } from '../dashboard/components/MonthlyLeaveChart';
 import { DepartmentAttendanceChart } from '../dashboard/components/DepartmentAttendanceChart';
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn, user } = useAppSelector((state) => state.session);
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['dashboard'],
     queryFn: async () => {
@@ -39,7 +44,20 @@ const HomePage: React.FC = () => {
       return response.data;
     },
     refetchInterval: 60000, // Refetch every minute
+    enabled: isLoggedIn && !!user, // Only fetch if user is logged in
   });
+
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (!isLoggedIn || !user) {
+      navigate('/userLogin');
+    }
+  }, [isLoggedIn, user, navigate]);
+
+  // Early return if not authenticated
+  if (!isLoggedIn || !user) {
+    return null;
+  }
 
   if (isLoading) {
     return (

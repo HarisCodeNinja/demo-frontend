@@ -24,11 +24,11 @@ const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'u
 
     return (
       <Route element={<Layout />}>
-        <Route key="home" path="/" element={<HomePage />} />
         <Route key="notAuth" path="/notAuth" element={<NotAuthPage />} />
 
         {config.requiresAuth ? (
           <Route element={<RequireAuth />}>
+            <Route key="home" path="/" element={<HomePage />} />
             {config.routes.map((route, index) => (
               <Route
                 key={index}
