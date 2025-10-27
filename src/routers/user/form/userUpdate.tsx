@@ -60,26 +60,6 @@ const UserForm: React.FC<UserFormProps> = ({ }) => {
                 />
 <FormField
                     control={form.control}
-                    name="password"
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                                <Input 
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    {...fieldProps}
-                                    
-                                    value={fieldProps.value?.toString() || ''}
-                                />
-                            </FormControl>
-                            
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-<FormField
-                    control={form.control}
                     name="role"
                     render={({ field: fieldProps }) => (
                         <FormItem>
@@ -104,7 +84,7 @@ const UserForm: React.FC<UserFormProps> = ({ }) => {
                     )}
                 />
 				<div className="text-sm text-muted-foreground">
-					<span className="text-red-500">*</span> Required fields
+					<span className="text-destructive">*</span> Required fields
 				</div>
 			</div>
 		</Form>
