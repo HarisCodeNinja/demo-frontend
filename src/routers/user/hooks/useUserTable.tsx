@@ -21,10 +21,7 @@ interface UseUserTableConfigProps {
 export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKeys = {} }: UseUserTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IUserIndex>[] = useMemo(
-    () => userTableColumns,
-    [],
-  );
+  const columns: TableColumn<IUserIndex>[] = useMemo(() => userTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[userConstants.TABLE_CONFIG_KEY] || {});
   const { [userConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -58,13 +55,13 @@ export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKe
   }, [entityPager, setUserCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[userConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [userConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(userConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[userConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [userConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(userConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -133,7 +130,7 @@ export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKe
 
   const actions: TableAction<IUserIndex>[] = useMemo(() => {
     const list: TableAction<IUserIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -146,7 +143,6 @@ export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKe
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -159,7 +155,6 @@ export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKe
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -210,10 +205,9 @@ export const useUserTableConfig = ({ setUserCount, setCurrentPageCount, filterKe
 // Export table columns for use in other components
 export const userTableColumns: TableColumn<IUserIndex>[] = [
   { key: 'userId', title: 'User Id', dataIndex: 'userId', sortable: false },
-			{ key: 'email', title: 'Email', dataIndex: 'email', sortable: false },
-			{ key: 'username', title: 'Username', dataIndex: 'username', sortable: false },
-			{ key: 'password', title: 'Password', dataIndex: 'password', sortable: false },
-			{ key: 'role', title: 'Role', dataIndex: 'role', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
+  { key: 'email', title: 'Email', dataIndex: 'email', sortable: false },
+  { key: 'username', title: 'Username', dataIndex: 'username', sortable: false },
+  { key: 'role', title: 'Role', dataIndex: 'role', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

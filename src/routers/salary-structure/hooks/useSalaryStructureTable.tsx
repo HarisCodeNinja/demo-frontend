@@ -11,6 +11,7 @@ import { TableAction, TableColumn } from '@/types/table';
 import { ISalaryStructureIndex } from '../interface';
 import salaryStructureConstants from '../constants';
 import { formatDate } from '@/util/Time';
+import { JSONValueRenderer } from '@/components/common/JSONValueRenderer';
 
 interface UseSalaryStructureTableConfigProps {
   setSalaryStructureCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -209,8 +210,8 @@ export const salaryStructureTableColumns: TableColumn<ISalaryStructureIndex>[] =
   { key: 'salaryStructureId', title: 'Salary Structure Id', dataIndex: 'salaryStructureId', sortable: false },
   { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
   { key: 'basicSalary', title: 'Basic Salary', dataIndex: 'basicSalary', sortable: false },
-  { key: 'allowance', title: 'Allowance', dataIndex: 'allowance', sortable: false },
-  { key: 'deduction', title: 'Deduction', dataIndex: 'deduction', sortable: false },
+  { key: 'allowance', title: 'Allowance', dataIndex: 'allowance', sortable: false, render: (value) => <JSONValueRenderer value={value} /> },
+  { key: 'deduction', title: 'Deduction', dataIndex: 'deduction', sortable: false, render: (value) => <JSONValueRenderer value={value} /> },
   { key: 'effectiveDate', title: 'Effective Date', dataIndex: 'effectiveDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
   { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
   { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },

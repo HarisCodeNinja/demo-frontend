@@ -11,6 +11,7 @@ import { TableAction, TableColumn } from '@/types/table';
 import { IAuditLogIndex } from '../interface';
 import auditLogConstants from '../constants';
 import { formatDate, formatDateTime } from '@/util/Time';
+import { JSONValueRenderer } from '@/components/common/JSONValueRenderer';
 
 interface UseAuditLogTableConfigProps {
   setAuditLogCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -209,8 +210,20 @@ export const auditLogTableColumns: TableColumn<IAuditLogIndex>[] = [
   { key: 'action', title: 'Action', dataIndex: 'action', sortable: false },
   { key: 'tableName', title: 'Table Name', dataIndex: 'tableName', sortable: false },
   { key: 'recordId', title: 'Record Id', dataIndex: 'recordId', sortable: false },
-  { key: 'oldValue', title: 'Old Value', dataIndex: 'oldValue', sortable: false },
-  { key: 'newValue', title: 'New Value', dataIndex: 'newValue', sortable: false },
+  {
+    key: 'oldValue',
+    title: 'Old Value',
+    dataIndex: 'oldValue',
+    sortable: false,
+    render: (value) => <JSONValueRenderer value={value} />
+  },
+  {
+    key: 'newValue',
+    title: 'New Value',
+    dataIndex: 'newValue',
+    sortable: false,
+    render: (value) => <JSONValueRenderer value={value} />
+  },
   { key: 'ipAddress', title: 'Ip Address', dataIndex: 'ipAddress', sortable: false },
   { key: 'timestamp', title: 'Timestamp', dataIndex: 'timestamp', sortable: false, render: (value) => (value ? formatDateTime(value) : '-') },
   { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
