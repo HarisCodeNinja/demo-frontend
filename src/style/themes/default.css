@@ -7,6 +7,89 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+/* Custom Scrollbar Styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.8 0.02 272) oklch(0.98 0.01 272);
+}
+
+.dark * {
+  scrollbar-color: oklch(0.35 0.1 280) oklch(0.22 0.08 280);
+}
+
+/* Webkit Scrollbar (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.98 0.01 272);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.8 0.02 272);
+  border-radius: 100px;
+  border: 2px solid oklch(0.98 0.01 272);
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0.15 292);
+  border: 1px solid oklch(0.98 0.01 272);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: oklch(0.5 0.2 292);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: oklch(0.22 0.08 280);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.35 0.1 280);
+  border-color: oklch(0.22 0.08 280);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0.2 292);
+  border-color: oklch(0.22 0.08 280);
+}
+
+.dark ::-webkit-scrollbar-thumb:active {
+  background: oklch(0.7 0.2 292);
+}
+
+/* Enhanced scrollbar for sidebar and main content areas */
+.sidebar-scroll::-webkit-scrollbar,
+[data-slot="sidebar"]::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb,
+[data-slot="sidebar"]::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0.05 272);
+  border-width: 1px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover,
+[data-slot="sidebar"]::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0.15 292);
+  width: 8px;
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb,
+.dark [data-slot="sidebar"]::-webkit-scrollbar-thumb {
+  background: oklch(0.4 0.12 280);
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb:hover,
+.dark [data-slot="sidebar"]::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.6 0.2 292);
+}
 
 :root {
   --background: oklch(1.0000 0 0);
