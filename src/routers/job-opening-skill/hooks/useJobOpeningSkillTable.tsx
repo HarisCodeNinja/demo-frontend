@@ -10,6 +10,7 @@ import jobOpeningSkillTableConfigDefault from '../data/jobOpeningSkillTableConfi
 import { TableAction, TableColumn } from '@/types/table';
 import { IJobOpeningSkillIndex } from '../interface';
 import jobOpeningSkillConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseJobOpeningSkillTableConfigProps {
   setJobOpeningSkillCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseJobOpeningSkillTableConfigProps {
 export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurrentPageCount, filterKeys = {} }: UseJobOpeningSkillTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IJobOpeningSkillIndex>[] = useMemo(
-    () => jobOpeningSkillTableColumns,
-    [],
-  );
+  const columns: TableColumn<IJobOpeningSkillIndex>[] = useMemo(() => jobOpeningSkillTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[jobOpeningSkillConstants.TABLE_CONFIG_KEY] || {});
   const { [jobOpeningSkillConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
   }, [entityPager, setJobOpeningSkillCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[jobOpeningSkillConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [jobOpeningSkillConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(jobOpeningSkillConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[jobOpeningSkillConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [jobOpeningSkillConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(jobOpeningSkillConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
 
   const actions: TableAction<IJobOpeningSkillIndex>[] = useMemo(() => {
     const list: TableAction<IJobOpeningSkillIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(jobOpeningSkillTableConfigDefault).some((key) => (jobOpeningSkillTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(jobOpeningSkillTableConfigDefault).some(
+      (key) => (jobOpeningSkillTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,9 +207,9 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
 // Export table columns for use in other components
 export const jobOpeningSkillTableColumns: TableColumn<IJobOpeningSkillIndex>[] = [
   { key: 'jobOpeningSkillId', title: 'Job Opening Skill Id', dataIndex: 'jobOpeningSkillId', sortable: false },
-			{ key: 'jobOpeningId', title: 'Job Opening Id', dataIndex: 'jobOpeningId', sortable: false },
-			{ key: 'skillId', title: 'Skill Id', dataIndex: 'skillId', sortable: false },
-			{ key: 'requiredLevel', title: 'Required Level', dataIndex: 'requiredLevel', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'jobOpening', title: 'Job Opening', dataIndex: 'jobTitle', sortable: false },
+  { key: 'skill', title: 'Skill Required', dataIndex: 'skillName', sortable: false },
+  { key: 'requiredLevel', title: 'Level Required', dataIndex: 'requiredLevel', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

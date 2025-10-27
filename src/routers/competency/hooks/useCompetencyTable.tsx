@@ -10,6 +10,7 @@ import competencyTableConfigDefault from '../data/competencyTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { ICompetencyIndex } from '../interface';
 import competencyConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseCompetencyTableConfigProps {
   setCompetencyCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -211,6 +212,6 @@ export const competencyTableColumns: TableColumn<ICompetencyIndex>[] = [
   { key: 'competencyId', title: 'Competency Id', dataIndex: 'competencyId', sortable: false },
 			{ key: 'competencyName', title: 'Competency Name', dataIndex: 'competencyName', sortable: false },
 			{ key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

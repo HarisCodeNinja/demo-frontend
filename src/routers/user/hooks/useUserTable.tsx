@@ -10,6 +10,7 @@ import userTableConfigDefault from '../data/userTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IUserIndex } from '../interface';
 import userConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseUserTableConfigProps {
   setUserCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -213,6 +214,6 @@ export const userTableColumns: TableColumn<IUserIndex>[] = [
 			{ key: 'username', title: 'Username', dataIndex: 'username', sortable: false },
 			{ key: 'password', title: 'Password', dataIndex: 'password', sortable: false },
 			{ key: 'role', title: 'Role', dataIndex: 'role', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

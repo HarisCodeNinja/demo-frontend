@@ -10,6 +10,7 @@ import candidateTableConfigDefault from '../data/candidateTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { ICandidateIndex } from '../interface';
 import candidateConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseCandidateTableConfigProps {
   setCandidateCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseCandidateTableConfigProps {
 export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount, filterKeys = {} }: UseCandidateTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<ICandidateIndex>[] = useMemo(
-    () => candidateTableColumns,
-    [],
-  );
+  const columns: TableColumn<ICandidateIndex>[] = useMemo(() => candidateTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[candidateConstants.TABLE_CONFIG_KEY] || {});
   const { [candidateConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount
   }, [entityPager, setCandidateCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[candidateConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [candidateConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(candidateConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[candidateConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [candidateConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(candidateConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount
 
   const actions: TableAction<ICandidateIndex>[] = useMemo(() => {
     const list: TableAction<ICandidateIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,15 +205,15 @@ export const useCandidateTableConfig = ({ setCandidateCount, setCurrentPageCount
 // Export table columns for use in other components
 export const candidateTableColumns: TableColumn<ICandidateIndex>[] = [
   { key: 'candidateId', title: 'Candidate Id', dataIndex: 'candidateId', sortable: false },
-			{ key: 'firstName', title: 'First Name', dataIndex: 'firstName', sortable: false },
-			{ key: 'lastName', title: 'Last Name', dataIndex: 'lastName', sortable: false },
-			{ key: 'email', title: 'Email', dataIndex: 'email', sortable: false },
-			{ key: 'phoneNumber', title: 'Phone Number', dataIndex: 'phoneNumber', sortable: false },
-			{ key: 'resumeText', title: 'Resume Text', dataIndex: 'resumeText', sortable: false },
-			{ key: 'source', title: 'Source', dataIndex: 'source', sortable: false },
-			{ key: 'currentStatus', title: 'Current Status', dataIndex: 'currentStatus', sortable: false },
-			{ key: 'jobOpeningId', title: 'Job Opening Id', dataIndex: 'jobOpeningId', sortable: false },
-			{ key: 'referredByEmployeeId', title: 'Referred By Employee Id', dataIndex: 'referredByEmployeeId', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'firstName', title: 'First Name', dataIndex: 'firstName', sortable: false },
+  { key: 'lastName', title: 'Last Name', dataIndex: 'lastName', sortable: false },
+  { key: 'email', title: 'Email', dataIndex: 'email', sortable: false },
+  { key: 'phoneNumber', title: 'Phone Number', dataIndex: 'phoneNumber', sortable: false },
+  { key: 'resumeText', title: 'Resume Text', dataIndex: 'resumeText', sortable: false },
+  { key: 'source', title: 'Source', dataIndex: 'source', sortable: false },
+  { key: 'currentStatus', title: 'Current Status', dataIndex: 'currentStatus', sortable: false },
+  { key: 'jobTitle', title: 'Job Title', dataIndex: 'jobTitle', sortable: false },
+  { key: 'referredByEmployee', title: 'Referred By', dataIndex: 'referredByFirstName', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

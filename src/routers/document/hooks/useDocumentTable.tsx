@@ -10,6 +10,7 @@ import documentTableConfigDefault from '../data/documentTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IDocumentIndex } from '../interface';
 import documentConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseDocumentTableConfigProps {
   setDocumentCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseDocumentTableConfigProps {
 export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, filterKeys = {} }: UseDocumentTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IDocumentIndex>[] = useMemo(
-    () => documentTableColumns,
-    [],
-  );
+  const columns: TableColumn<IDocumentIndex>[] = useMemo(() => documentTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[documentConstants.TABLE_CONFIG_KEY] || {});
   const { [documentConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, 
   }, [entityPager, setDocumentCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[documentConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [documentConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(documentConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[documentConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [documentConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(documentConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, 
 
   const actions: TableAction<IDocumentIndex>[] = useMemo(() => {
     const list: TableAction<IDocumentIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,11 +205,11 @@ export const useDocumentTableConfig = ({ setDocumentCount, setCurrentPageCount, 
 // Export table columns for use in other components
 export const documentTableColumns: TableColumn<IDocumentIndex>[] = [
   { key: 'documentId', title: 'Document Id', dataIndex: 'documentId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'documentType', title: 'Document Type', dataIndex: 'documentType', sortable: false },
-			{ key: 'fileName', title: 'File Name', dataIndex: 'fileName', sortable: false },
-			{ key: 'fileUrl', title: 'File Url', dataIndex: 'fileUrl', sortable: false },
-			{ key: 'uploadedBy', title: 'Uploaded By', dataIndex: 'uploadedBy', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
+  { key: 'documentType', title: 'Document Type', dataIndex: 'documentType', sortable: false },
+  { key: 'fileName', title: 'File Name', dataIndex: 'fileName', sortable: false },
+  { key: 'fileUrl', title: 'File Url', dataIndex: 'fileUrl', sortable: false },
+  // { key: 'uploadedBy', title: 'Uploaded By', dataIndex: 'uploadedBy', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

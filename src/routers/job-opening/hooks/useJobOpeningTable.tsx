@@ -10,6 +10,7 @@ import jobOpeningTableConfigDefault from '../data/jobOpeningTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IJobOpeningIndex } from '../interface';
 import jobOpeningConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseJobOpeningTableConfigProps {
   setJobOpeningCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseJobOpeningTableConfigProps {
 export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCount, filterKeys = {} }: UseJobOpeningTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IJobOpeningIndex>[] = useMemo(
-    () => jobOpeningTableColumns,
-    [],
-  );
+  const columns: TableColumn<IJobOpeningIndex>[] = useMemo(() => jobOpeningTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[jobOpeningConstants.TABLE_CONFIG_KEY] || {});
   const { [jobOpeningConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCou
   }, [entityPager, setJobOpeningCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[jobOpeningConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [jobOpeningConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(jobOpeningConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[jobOpeningConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [jobOpeningConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(jobOpeningConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCou
 
   const actions: TableAction<IJobOpeningIndex>[] = useMemo(() => {
     const list: TableAction<IJobOpeningIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCou
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCou
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,16 +205,16 @@ export const useJobOpeningTableConfig = ({ setJobOpeningCount, setCurrentPageCou
 // Export table columns for use in other components
 export const jobOpeningTableColumns: TableColumn<IJobOpeningIndex>[] = [
   { key: 'jobOpeningId', title: 'Job Opening Id', dataIndex: 'jobOpeningId', sortable: false },
-			{ key: 'title', title: 'Title', dataIndex: 'title', sortable: false },
-			{ key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
-			{ key: 'departmentId', title: 'Department Id', dataIndex: 'departmentId', sortable: false },
-			{ key: 'designationId', title: 'Designation Id', dataIndex: 'designationId', sortable: false },
-			{ key: 'locationId', title: 'Location Id', dataIndex: 'locationId', sortable: false },
-			{ key: 'requiredExperience', title: 'Required Experience', dataIndex: 'requiredExperience', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'publishedAt', title: 'Published At', dataIndex: 'publishedAt', sortable: false },
-			{ key: 'closedAt', title: 'Closed At', dataIndex: 'closedAt', sortable: false },
-			{ key: 'createdBy', title: 'Created By', dataIndex: 'createdBy', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'title', title: 'Title', dataIndex: 'title', sortable: false },
+  { key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
+  { key: 'department', title: 'Department', dataIndex: 'departmentName', sortable: false },
+  { key: 'designation', title: 'Designation', dataIndex: 'designationName', sortable: false },
+  { key: 'location', title: 'Location', dataIndex: 'locationName', sortable: false },
+  { key: 'requiredExperience', title: 'Required Experience', dataIndex: 'requiredExperience', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'publishedAt', title: 'Published At', dataIndex: 'publishedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'closedAt', title: 'Closed At', dataIndex: 'closedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  // { key: 'createdBy', title: 'Created By', dataIndex: 'createdBy', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

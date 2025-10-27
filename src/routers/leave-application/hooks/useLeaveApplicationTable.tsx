@@ -10,6 +10,7 @@ import leaveApplicationTableConfigDefault from '../data/leaveApplicationTableCon
 import { TableAction, TableColumn } from '@/types/table';
 import { ILeaveApplicationIndex } from '../interface';
 import leaveApplicationConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseLeaveApplicationTableConfigProps {
   setLeaveApplicationCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseLeaveApplicationTableConfigProps {
 export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCurrentPageCount, filterKeys = {} }: UseLeaveApplicationTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<ILeaveApplicationIndex>[] = useMemo(
-    () => leaveApplicationTableColumns,
-    [],
-  );
+  const columns: TableColumn<ILeaveApplicationIndex>[] = useMemo(() => leaveApplicationTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[leaveApplicationConstants.TABLE_CONFIG_KEY] || {});
   const { [leaveApplicationConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
   }, [entityPager, setLeaveApplicationCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[leaveApplicationConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [leaveApplicationConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(leaveApplicationConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[leaveApplicationConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [leaveApplicationConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(leaveApplicationConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
 
   const actions: TableAction<ILeaveApplicationIndex>[] = useMemo(() => {
     const list: TableAction<ILeaveApplicationIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(leaveApplicationTableConfigDefault).some((key) => (leaveApplicationTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(leaveApplicationTableConfigDefault).some(
+      (key) => (leaveApplicationTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,15 +207,15 @@ export const useLeaveApplicationTableConfig = ({ setLeaveApplicationCount, setCu
 // Export table columns for use in other components
 export const leaveApplicationTableColumns: TableColumn<ILeaveApplicationIndex>[] = [
   { key: 'leaveApplicationId', title: 'Leave Application Id', dataIndex: 'leaveApplicationId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'leaveTypeId', title: 'Leave Type Id', dataIndex: 'leaveTypeId', sortable: false },
-			{ key: 'startDate', title: 'Start Date', dataIndex: 'startDate', sortable: false },
-			{ key: 'endDate', title: 'End Date', dataIndex: 'endDate', sortable: false },
-			{ key: 'numberOfDay', title: 'Number Of Day', dataIndex: 'numberOfDay', sortable: false },
-			{ key: 'reason', title: 'Reason', dataIndex: 'reason', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'appliedBy', title: 'Applied By', dataIndex: 'appliedBy', sortable: false },
-			{ key: 'approvedBy', title: 'Approved By', dataIndex: 'approvedBy', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
+  { key: 'leaveType', title: 'Leave Type', dataIndex: 'typeName', sortable: false },
+  { key: 'startDate', title: 'Start Date', dataIndex: 'startDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'endDate', title: 'End Date', dataIndex: 'endDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'numberOfDay', title: 'Number Of Day', dataIndex: 'numberOfDay', sortable: false },
+  { key: 'reason', title: 'Reason', dataIndex: 'reason', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  // { key: 'appliedBy', title: 'Applied By', dataIndex: 'appliedBy', sortable: false },
+  // { key: 'approvedBy', title: 'Approved By', dataIndex: 'approvedBy', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

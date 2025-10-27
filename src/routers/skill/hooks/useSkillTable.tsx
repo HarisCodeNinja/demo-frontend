@@ -10,6 +10,7 @@ import skillTableConfigDefault from '../data/skillTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { ISkillIndex } from '../interface';
 import skillConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseSkillTableConfigProps {
   setSkillCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -210,6 +211,6 @@ export const useSkillTableConfig = ({ setSkillCount, setCurrentPageCount, filter
 export const skillTableColumns: TableColumn<ISkillIndex>[] = [
   { key: 'skillId', title: 'Skill Id', dataIndex: 'skillId', sortable: false },
 			{ key: 'skillName', title: 'Skill Name', dataIndex: 'skillName', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

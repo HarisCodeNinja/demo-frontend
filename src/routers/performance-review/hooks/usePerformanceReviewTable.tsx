@@ -10,6 +10,7 @@ import performanceReviewTableConfigDefault from '../data/performanceReviewTableC
 import { TableAction, TableColumn } from '@/types/table';
 import { IPerformanceReviewIndex } from '../interface';
 import performanceReviewConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UsePerformanceReviewTableConfigProps {
   setPerformanceReviewCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UsePerformanceReviewTableConfigProps {
 export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, setCurrentPageCount, filterKeys = {} }: UsePerformanceReviewTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IPerformanceReviewIndex>[] = useMemo(
-    () => performanceReviewTableColumns,
-    [],
-  );
+  const columns: TableColumn<IPerformanceReviewIndex>[] = useMemo(() => performanceReviewTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[performanceReviewConstants.TABLE_CONFIG_KEY] || {});
   const { [performanceReviewConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
   }, [entityPager, setPerformanceReviewCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[performanceReviewConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [performanceReviewConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(performanceReviewConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[performanceReviewConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [performanceReviewConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(performanceReviewConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
 
   const actions: TableAction<IPerformanceReviewIndex>[] = useMemo(() => {
     const list: TableAction<IPerformanceReviewIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(performanceReviewTableConfigDefault).some((key) => (performanceReviewTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(performanceReviewTableConfigDefault).some(
+      (key) => (performanceReviewTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,15 +207,15 @@ export const usePerformanceReviewTableConfig = ({ setPerformanceReviewCount, set
 // Export table columns for use in other components
 export const performanceReviewTableColumns: TableColumn<IPerformanceReviewIndex>[] = [
   { key: 'performanceReviewId', title: 'Performance Review Id', dataIndex: 'performanceReviewId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'reviewerId', title: 'Reviewer Id', dataIndex: 'reviewerId', sortable: false },
-			{ key: 'reviewPeriod', title: 'Review Period', dataIndex: 'reviewPeriod', sortable: false },
-			{ key: 'reviewDate', title: 'Review Date', dataIndex: 'reviewDate', sortable: false },
-			{ key: 'selfAssessment', title: 'Self Assessment', dataIndex: 'selfAssessment', sortable: false },
-			{ key: 'managerFeedback', title: 'Manager Feedback', dataIndex: 'managerFeedback', sortable: false },
-			{ key: 'overallRating', title: 'Overall Rating', dataIndex: 'overallRating', sortable: false },
-			{ key: 'recommendation', title: 'Recommendation', dataIndex: 'recommendation', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'employeeFirstName', sortable: false },
+  { key: 'reviewer', title: 'Reviewer', dataIndex: 'reviewerFirstName', sortable: false },
+  { key: 'reviewPeriod', title: 'Review Period', dataIndex: 'reviewPeriod', sortable: false },
+  { key: 'reviewDate', title: 'Review Date', dataIndex: 'reviewDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'selfAssessment', title: 'Self Assessment', dataIndex: 'selfAssessment', sortable: false },
+  { key: 'managerFeedback', title: 'Manager Feedback', dataIndex: 'managerFeedback', sortable: false },
+  { key: 'overallRating', title: 'Overall Rating', dataIndex: 'overallRating', sortable: false },
+  { key: 'recommendation', title: 'Recommendation', dataIndex: 'recommendation', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

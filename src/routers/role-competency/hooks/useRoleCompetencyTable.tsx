@@ -10,6 +10,7 @@ import roleCompetencyTableConfigDefault from '../data/roleCompetencyTableConfigD
 import { TableAction, TableColumn } from '@/types/table';
 import { IRoleCompetencyIndex } from '../interface';
 import roleCompetencyConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseRoleCompetencyTableConfigProps {
   setRoleCompetencyCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseRoleCompetencyTableConfigProps {
 export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurrentPageCount, filterKeys = {} }: UseRoleCompetencyTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IRoleCompetencyIndex>[] = useMemo(
-    () => roleCompetencyTableColumns,
-    [],
-  );
+  const columns: TableColumn<IRoleCompetencyIndex>[] = useMemo(() => roleCompetencyTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[roleCompetencyConstants.TABLE_CONFIG_KEY] || {});
   const { [roleCompetencyConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
   }, [entityPager, setRoleCompetencyCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[roleCompetencyConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [roleCompetencyConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(roleCompetencyConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[roleCompetencyConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [roleCompetencyConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(roleCompetencyConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
 
   const actions: TableAction<IRoleCompetencyIndex>[] = useMemo(() => {
     const list: TableAction<IRoleCompetencyIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(roleCompetencyTableConfigDefault).some((key) => (roleCompetencyTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(roleCompetencyTableConfigDefault).some(
+      (key) => (roleCompetencyTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,9 +207,9 @@ export const useRoleCompetencyTableConfig = ({ setRoleCompetencyCount, setCurren
 // Export table columns for use in other components
 export const roleCompetencyTableColumns: TableColumn<IRoleCompetencyIndex>[] = [
   { key: 'roleCompetencyId', title: 'Role Competency Id', dataIndex: 'roleCompetencyId', sortable: false },
-			{ key: 'designationId', title: 'Designation Id', dataIndex: 'designationId', sortable: false },
-			{ key: 'competencyId', title: 'Competency Id', dataIndex: 'competencyId', sortable: false },
-			{ key: 'requiredProficiency', title: 'Required Proficiency', dataIndex: 'requiredProficiency', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'designation', title: 'Designation', dataIndex: 'designationName', sortable: false },
+  { key: 'competency', title: 'Competency', dataIndex: 'competencyName', sortable: false },
+  { key: 'requiredProficiency', title: 'Required Proficiency', dataIndex: 'requiredProficiency', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

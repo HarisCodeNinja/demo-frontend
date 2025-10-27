@@ -10,6 +10,7 @@ import departmentTableConfigDefault from '../data/departmentTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IDepartmentIndex } from '../interface';
 import departmentConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseDepartmentTableConfigProps {
   setDepartmentCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -210,6 +211,6 @@ export const useDepartmentTableConfig = ({ setDepartmentCount, setCurrentPageCou
 export const departmentTableColumns: TableColumn<IDepartmentIndex>[] = [
   { key: 'departmentId', title: 'Department Id', dataIndex: 'departmentId', sortable: false },
 			{ key: 'departmentName', title: 'Department Name', dataIndex: 'departmentName', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

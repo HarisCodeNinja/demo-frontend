@@ -10,6 +10,7 @@ import interviewTableConfigDefault from '../data/interviewTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IInterviewIndex } from '../interface';
 import interviewConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseInterviewTableConfigProps {
   setInterviewCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseInterviewTableConfigProps {
 export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount, filterKeys = {} }: UseInterviewTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IInterviewIndex>[] = useMemo(
-    () => interviewTableColumns,
-    [],
-  );
+  const columns: TableColumn<IInterviewIndex>[] = useMemo(() => interviewTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[interviewConstants.TABLE_CONFIG_KEY] || {});
   const { [interviewConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount
   }, [entityPager, setInterviewCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[interviewConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [interviewConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(interviewConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[interviewConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [interviewConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(interviewConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount
 
   const actions: TableAction<IInterviewIndex>[] = useMemo(() => {
     const list: TableAction<IInterviewIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,13 +205,13 @@ export const useInterviewTableConfig = ({ setInterviewCount, setCurrentPageCount
 // Export table columns for use in other components
 export const interviewTableColumns: TableColumn<IInterviewIndex>[] = [
   { key: 'interviewId', title: 'Interview Id', dataIndex: 'interviewId', sortable: false },
-			{ key: 'candidateId', title: 'Candidate Id', dataIndex: 'candidateId', sortable: false },
-			{ key: 'jobOpeningId', title: 'Job Opening Id', dataIndex: 'jobOpeningId', sortable: false },
-			{ key: 'interviewerId', title: 'Interviewer Id', dataIndex: 'interviewerId', sortable: false },
-			{ key: 'interviewDate', title: 'Interview Date', dataIndex: 'interviewDate', sortable: false },
-			{ key: 'feedback', title: 'Feedback', dataIndex: 'feedback', sortable: false },
-			{ key: 'rating', title: 'Rating', dataIndex: 'rating', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'candidate', title: 'Candidate', dataIndex: 'candidateFirstName', sortable: false },
+  { key: 'jobTitle', title: 'Job Title', dataIndex: 'jobTitle', sortable: false },
+  { key: 'interviewer', title: 'Interviewer', dataIndex: 'interviewerFirstName', sortable: false },
+  { key: 'interviewDate', title: 'Interview Date', dataIndex: 'interviewDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'feedback', title: 'Feedback', dataIndex: 'feedback', sortable: false },
+  { key: 'rating', title: 'Rating', dataIndex: 'rating', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

@@ -10,6 +10,7 @@ import auditLogTableConfigDefault from '../data/auditLogTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IAuditLogIndex } from '../interface';
 import auditLogConstants from '../constants';
+import { formatDate, formatDateTime } from '@/util/Time';
 
 interface UseAuditLogTableConfigProps {
   setAuditLogCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseAuditLogTableConfigProps {
 export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, filterKeys = {} }: UseAuditLogTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IAuditLogIndex>[] = useMemo(
-    () => auditLogTableColumns,
-    [],
-  );
+  const columns: TableColumn<IAuditLogIndex>[] = useMemo(() => auditLogTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[auditLogConstants.TABLE_CONFIG_KEY] || {});
   const { [auditLogConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
   }, [entityPager, setAuditLogCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[auditLogConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [auditLogConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(auditLogConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[auditLogConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [auditLogConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(auditLogConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
 
   const actions: TableAction<IAuditLogIndex>[] = useMemo(() => {
     const list: TableAction<IAuditLogIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,14 +205,14 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
 // Export table columns for use in other components
 export const auditLogTableColumns: TableColumn<IAuditLogIndex>[] = [
   { key: 'auditLogId', title: 'Audit Log Id', dataIndex: 'auditLogId', sortable: false },
-			{ key: 'userId', title: 'User Id', dataIndex: 'userId', sortable: false },
-			{ key: 'action', title: 'Action', dataIndex: 'action', sortable: false },
-			{ key: 'tableName', title: 'Table Name', dataIndex: 'tableName', sortable: false },
-			{ key: 'recordId', title: 'Record Id', dataIndex: 'recordId', sortable: false },
-			{ key: 'oldValue', title: 'Old Value', dataIndex: 'oldValue', sortable: false },
-			{ key: 'newValue', title: 'New Value', dataIndex: 'newValue', sortable: false },
-			{ key: 'ipAddress', title: 'Ip Address', dataIndex: 'ipAddress', sortable: false },
-			{ key: 'timestamp', title: 'Timestamp', dataIndex: 'timestamp', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  // { key: 'userId', title: 'User Id', dataIndex: 'userId', sortable: false },
+  { key: 'action', title: 'Action', dataIndex: 'action', sortable: false },
+  { key: 'tableName', title: 'Table Name', dataIndex: 'tableName', sortable: false },
+  { key: 'recordId', title: 'Record Id', dataIndex: 'recordId', sortable: false },
+  { key: 'oldValue', title: 'Old Value', dataIndex: 'oldValue', sortable: false },
+  { key: 'newValue', title: 'New Value', dataIndex: 'newValue', sortable: false },
+  { key: 'ipAddress', title: 'Ip Address', dataIndex: 'ipAddress', sortable: false },
+  { key: 'timestamp', title: 'Timestamp', dataIndex: 'timestamp', sortable: false, render: (value) => (value ? formatDateTime(value) : '-') },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

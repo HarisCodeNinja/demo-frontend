@@ -10,6 +10,7 @@ import candidateSkillTableConfigDefault from '../data/candidateSkillTableConfigD
 import { TableAction, TableColumn } from '@/types/table';
 import { ICandidateSkillIndex } from '../interface';
 import candidateSkillConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseCandidateSkillTableConfigProps {
   setCandidateSkillCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseCandidateSkillTableConfigProps {
 export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurrentPageCount, filterKeys = {} }: UseCandidateSkillTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<ICandidateSkillIndex>[] = useMemo(
-    () => candidateSkillTableColumns,
-    [],
-  );
+  const columns: TableColumn<ICandidateSkillIndex>[] = useMemo(() => candidateSkillTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[candidateSkillConstants.TABLE_CONFIG_KEY] || {});
   const { [candidateSkillConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
   }, [entityPager, setCandidateSkillCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[candidateSkillConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [candidateSkillConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(candidateSkillConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[candidateSkillConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [candidateSkillConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(candidateSkillConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
 
   const actions: TableAction<ICandidateSkillIndex>[] = useMemo(() => {
     const list: TableAction<ICandidateSkillIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(candidateSkillTableConfigDefault).some((key) => (candidateSkillTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(candidateSkillTableConfigDefault).some(
+      (key) => (candidateSkillTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,9 +207,9 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
 // Export table columns for use in other components
 export const candidateSkillTableColumns: TableColumn<ICandidateSkillIndex>[] = [
   { key: 'candidateSkillId', title: 'Candidate Skill Id', dataIndex: 'candidateSkillId', sortable: false },
-			{ key: 'candidateId', title: 'Candidate Id', dataIndex: 'candidateId', sortable: false },
-			{ key: 'skillId', title: 'Skill Id', dataIndex: 'skillId', sortable: false },
-			{ key: 'proficiency', title: 'Proficiency', dataIndex: 'proficiency', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'candidate', title: 'Candidate', dataIndex: 'candidateFirstName', sortable: false },
+  { key: 'skill', title: 'Skill', dataIndex: 'skillName', sortable: false },
+  { key: 'proficiency', title: 'Proficiency', dataIndex: 'proficiency', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

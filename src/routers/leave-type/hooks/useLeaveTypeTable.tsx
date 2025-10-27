@@ -10,6 +10,7 @@ import leaveTypeTableConfigDefault from '../data/leaveTypeTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { ILeaveTypeIndex } from '../interface';
 import leaveTypeConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseLeaveTypeTableConfigProps {
   setLeaveTypeCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -212,6 +213,6 @@ export const leaveTypeTableColumns: TableColumn<ILeaveTypeIndex>[] = [
 			{ key: 'typeName', title: 'Type Name', dataIndex: 'typeName', sortable: false },
 			{ key: 'maxDaysPerYear', title: 'Max Days Per Year', dataIndex: 'maxDaysPerYear', sortable: false },
 			{ key: 'isPaid', title: 'Is Paid', dataIndex: 'isPaid', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

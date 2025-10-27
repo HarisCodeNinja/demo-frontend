@@ -10,6 +10,7 @@ import employeeCompetencyTableConfigDefault from '../data/employeeCompetencyTabl
 import { TableAction, TableColumn } from '@/types/table';
 import { IEmployeeCompetencyIndex } from '../interface';
 import employeeCompetencyConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseEmployeeCompetencyTableConfigProps {
   setEmployeeCompetencyCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseEmployeeCompetencyTableConfigProps {
 export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, setCurrentPageCount, filterKeys = {} }: UseEmployeeCompetencyTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IEmployeeCompetencyIndex>[] = useMemo(
-    () => employeeCompetencyTableColumns,
-    [],
-  );
+  const columns: TableColumn<IEmployeeCompetencyIndex>[] = useMemo(() => employeeCompetencyTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[employeeCompetencyConstants.TABLE_CONFIG_KEY] || {});
   const { [employeeCompetencyConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
   }, [entityPager, setEmployeeCompetencyCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[employeeCompetencyConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [employeeCompetencyConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(employeeCompetencyConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[employeeCompetencyConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [employeeCompetencyConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(employeeCompetencyConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
 
   const actions: TableAction<IEmployeeCompetencyIndex>[] = useMemo(() => {
     const list: TableAction<IEmployeeCompetencyIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(employeeCompetencyTableConfigDefault).some((key) => (employeeCompetencyTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(employeeCompetencyTableConfigDefault).some(
+      (key) => (employeeCompetencyTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,10 +207,10 @@ export const useEmployeeCompetencyTableConfig = ({ setEmployeeCompetencyCount, s
 // Export table columns for use in other components
 export const employeeCompetencyTableColumns: TableColumn<IEmployeeCompetencyIndex>[] = [
   { key: 'employeeCompetencyId', title: 'Employee Competency Id', dataIndex: 'employeeCompetencyId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'competencyId', title: 'Competency Id', dataIndex: 'competencyId', sortable: false },
-			{ key: 'currentProficiency', title: 'Current Proficiency', dataIndex: 'currentProficiency', sortable: false },
-			{ key: 'lastEvaluated', title: 'Last Evaluated', dataIndex: 'lastEvaluated', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'employeeFirstName', sortable: false },
+  { key: 'competency', title: 'Competency', dataIndex: 'competencyName', sortable: false },
+  { key: 'currentProficiency', title: 'Current Proficiency', dataIndex: 'currentProficiency', sortable: false },
+  { key: 'lastEvaluated', title: 'Last Evaluated', dataIndex: 'lastEvaluated', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

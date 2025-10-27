@@ -10,6 +10,7 @@ import learningPlanTableConfigDefault from '../data/learningPlanTableConfigDefau
 import { TableAction, TableColumn } from '@/types/table';
 import { ILearningPlanIndex } from '../interface';
 import learningPlanConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseLearningPlanTableConfigProps {
   setLearningPlanCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseLearningPlanTableConfigProps {
 export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPageCount, filterKeys = {} }: UseLearningPlanTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<ILearningPlanIndex>[] = useMemo(
-    () => learningPlanTableColumns,
-    [],
-  );
+  const columns: TableColumn<ILearningPlanIndex>[] = useMemo(() => learningPlanTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[learningPlanConstants.TABLE_CONFIG_KEY] || {});
   const { [learningPlanConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPag
   }, [entityPager, setLearningPlanCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[learningPlanConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [learningPlanConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(learningPlanConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[learningPlanConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [learningPlanConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(learningPlanConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPag
 
   const actions: TableAction<ILearningPlanIndex>[] = useMemo(() => {
     const list: TableAction<ILearningPlanIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPag
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPag
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,13 +205,13 @@ export const useLearningPlanTableConfig = ({ setLearningPlanCount, setCurrentPag
 // Export table columns for use in other components
 export const learningPlanTableColumns: TableColumn<ILearningPlanIndex>[] = [
   { key: 'learningPlanId', title: 'Learning Plan Id', dataIndex: 'learningPlanId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'title', title: 'Title', dataIndex: 'title', sortable: false },
-			{ key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
-			{ key: 'startDate', title: 'Start Date', dataIndex: 'startDate', sortable: false },
-			{ key: 'endDate', title: 'End Date', dataIndex: 'endDate', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'assignedBy', title: 'Assigned By', dataIndex: 'assignedBy', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
+  { key: 'title', title: 'Title', dataIndex: 'title', sortable: false },
+  { key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
+  { key: 'startDate', title: 'Start Date', dataIndex: 'startDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'endDate', title: 'End Date', dataIndex: 'endDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  // { key: 'assignedBy', title: 'Assigned By', dataIndex: 'assignedBy', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

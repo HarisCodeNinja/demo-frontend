@@ -10,6 +10,7 @@ import jobLevelTableConfigDefault from '../data/jobLevelTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IJobLevelIndex } from '../interface';
 import jobLevelConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseJobLevelTableConfigProps {
   setJobLevelCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -211,6 +212,6 @@ export const jobLevelTableColumns: TableColumn<IJobLevelIndex>[] = [
   { key: 'jobLevelId', title: 'Job Level Id', dataIndex: 'jobLevelId', sortable: false },
 			{ key: 'levelName', title: 'Level Name', dataIndex: 'levelName', sortable: false },
 			{ key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

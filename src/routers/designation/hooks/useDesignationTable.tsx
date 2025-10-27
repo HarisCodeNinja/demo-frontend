@@ -10,6 +10,7 @@ import designationTableConfigDefault from '../data/designationTableConfigDefault
 import { TableAction, TableColumn } from '@/types/table';
 import { IDesignationIndex } from '../interface';
 import designationConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseDesignationTableConfigProps {
   setDesignationCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -210,6 +211,6 @@ export const useDesignationTableConfig = ({ setDesignationCount, setCurrentPageC
 export const designationTableColumns: TableColumn<IDesignationIndex>[] = [
   { key: 'designationId', title: 'Designation Id', dataIndex: 'designationId', sortable: false },
 			{ key: 'designationName', title: 'Designation Name', dataIndex: 'designationName', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

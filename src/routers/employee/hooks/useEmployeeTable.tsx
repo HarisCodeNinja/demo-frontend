@@ -10,6 +10,7 @@ import employeeTableConfigDefault from '../data/employeeTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IEmployeeIndex } from '../interface';
 import employeeConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseEmployeeTableConfigProps {
   setEmployeeCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseEmployeeTableConfigProps {
 export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, filterKeys = {} }: UseEmployeeTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IEmployeeIndex>[] = useMemo(
-    () => employeeTableColumns,
-    [],
-  );
+  const columns: TableColumn<IEmployeeIndex>[] = useMemo(() => employeeTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[employeeConstants.TABLE_CONFIG_KEY] || {});
   const { [employeeConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, 
   }, [entityPager, setEmployeeCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[employeeConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [employeeConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(employeeConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[employeeConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [employeeConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(employeeConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, 
 
   const actions: TableAction<IEmployeeIndex>[] = useMemo(() => {
     const list: TableAction<IEmployeeIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, 
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,21 +205,21 @@ export const useEmployeeTableConfig = ({ setEmployeeCount, setCurrentPageCount, 
 // Export table columns for use in other components
 export const employeeTableColumns: TableColumn<IEmployeeIndex>[] = [
   { key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'userId', title: 'User Id', dataIndex: 'userId', sortable: false },
-			{ key: 'employeeUniqueId', title: 'Employee Unique Id', dataIndex: 'employeeUniqueId', sortable: false },
-			{ key: 'firstName', title: 'First Name', dataIndex: 'firstName', sortable: false },
-			{ key: 'lastName', title: 'Last Name', dataIndex: 'lastName', sortable: false },
-			{ key: 'dateOfBirth', title: 'Date Of Birth', dataIndex: 'dateOfBirth', sortable: false },
-			{ key: 'gender', title: 'Gender', dataIndex: 'gender', sortable: false },
-			{ key: 'phoneNumber', title: 'Phone Number', dataIndex: 'phoneNumber', sortable: false },
-			{ key: 'address', title: 'Address', dataIndex: 'address', sortable: false },
-			{ key: 'personalEmail', title: 'Personal Email', dataIndex: 'personalEmail', sortable: false },
-			{ key: 'employmentStartDate', title: 'Employment Start Date', dataIndex: 'employmentStartDate', sortable: false },
-			{ key: 'employmentEndDate', title: 'Employment End Date', dataIndex: 'employmentEndDate', sortable: false },
-			{ key: 'departmentId', title: 'Department Id', dataIndex: 'departmentId', sortable: false },
-			{ key: 'designationId', title: 'Designation Id', dataIndex: 'designationId', sortable: false },
-			{ key: 'reportingManagerId', title: 'Reporting Manager Id', dataIndex: 'reportingManagerId', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  // { key: 'userId', title: 'User Id', dataIndex: 'userId', sortable: false },
+  { key: 'employeeUniqueId', title: 'Employee Unique Id', dataIndex: 'employeeUniqueId', sortable: false },
+  { key: 'firstName', title: 'First Name', dataIndex: 'firstName', sortable: false },
+  { key: 'lastName', title: 'Last Name', dataIndex: 'lastName', sortable: false },
+  { key: 'dateOfBirth', title: 'Date Of Birth', dataIndex: 'dateOfBirth', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'gender', title: 'Gender', dataIndex: 'gender', sortable: false },
+  { key: 'phoneNumber', title: 'Phone Number', dataIndex: 'phoneNumber', sortable: false },
+  { key: 'address', title: 'Address', dataIndex: 'address', sortable: false },
+  { key: 'personalEmail', title: 'Personal Email', dataIndex: 'personalEmail', sortable: false },
+  { key: 'employmentStartDate', title: 'Employment Start Date', dataIndex: 'employmentStartDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'employmentEndDate', title: 'Employment End Date', dataIndex: 'employmentEndDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'departmentName', title: 'Department', dataIndex: 'departmentName', sortable: false },
+  { key: 'designationName', title: 'Designation', dataIndex: 'designationName', sortable: false },
+  { key: 'reportingManager', title: 'Reporting Manager', dataIndex: 'reportingManagerFirstName', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

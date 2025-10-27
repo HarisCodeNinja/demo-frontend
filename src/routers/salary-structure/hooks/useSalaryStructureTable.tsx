@@ -10,6 +10,7 @@ import salaryStructureTableConfigDefault from '../data/salaryStructureTableConfi
 import { TableAction, TableColumn } from '@/types/table';
 import { ISalaryStructureIndex } from '../interface';
 import salaryStructureConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseSalaryStructureTableConfigProps {
   setSalaryStructureCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseSalaryStructureTableConfigProps {
 export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurrentPageCount, filterKeys = {} }: UseSalaryStructureTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<ISalaryStructureIndex>[] = useMemo(
-    () => salaryStructureTableColumns,
-    [],
-  );
+  const columns: TableColumn<ISalaryStructureIndex>[] = useMemo(() => salaryStructureTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[salaryStructureConstants.TABLE_CONFIG_KEY] || {});
   const { [salaryStructureConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
   }, [entityPager, setSalaryStructureCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[salaryStructureConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [salaryStructureConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(salaryStructureConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[salaryStructureConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [salaryStructureConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(salaryStructureConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
 
   const actions: TableAction<ISalaryStructureIndex>[] = useMemo(() => {
     const list: TableAction<ISalaryStructureIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -187,7 +183,9 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
     handleSort,
     getSortDirection,
     getSortIndex,
-    isConfigModified: Object.keys(salaryStructureTableConfigDefault).some((key) => (salaryStructureTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any]),
+    isConfigModified: Object.keys(salaryStructureTableConfigDefault).some(
+      (key) => (salaryStructureTableConfigDefault as any)[key as any] !== (tableConfiguration as any)[key as any],
+    ),
     tableConfiguration,
     handleDelete,
     isDeleteLoading: deleteEntityMutation.isPending,
@@ -209,12 +207,12 @@ export const useSalaryStructureTableConfig = ({ setSalaryStructureCount, setCurr
 // Export table columns for use in other components
 export const salaryStructureTableColumns: TableColumn<ISalaryStructureIndex>[] = [
   { key: 'salaryStructureId', title: 'Salary Structure Id', dataIndex: 'salaryStructureId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'basicSalary', title: 'Basic Salary', dataIndex: 'basicSalary', sortable: false },
-			{ key: 'allowance', title: 'Allowance', dataIndex: 'allowance', sortable: false },
-			{ key: 'deduction', title: 'Deduction', dataIndex: 'deduction', sortable: false },
-			{ key: 'effectiveDate', title: 'Effective Date', dataIndex: 'effectiveDate', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
+  { key: 'basicSalary', title: 'Basic Salary', dataIndex: 'basicSalary', sortable: false },
+  { key: 'allowance', title: 'Allowance', dataIndex: 'allowance', sortable: false },
+  { key: 'deduction', title: 'Deduction', dataIndex: 'deduction', sortable: false },
+  { key: 'effectiveDate', title: 'Effective Date', dataIndex: 'effectiveDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

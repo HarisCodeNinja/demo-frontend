@@ -10,6 +10,7 @@ import offerLetterTableConfigDefault from '../data/offerLetterTableConfigDefault
 import { TableAction, TableColumn } from '@/types/table';
 import { IOfferLetterIndex } from '../interface';
 import offerLetterConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseOfferLetterTableConfigProps {
   setOfferLetterCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseOfferLetterTableConfigProps {
 export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageCount, filterKeys = {} }: UseOfferLetterTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IOfferLetterIndex>[] = useMemo(
-    () => offerLetterTableColumns,
-    [],
-  );
+  const columns: TableColumn<IOfferLetterIndex>[] = useMemo(() => offerLetterTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[offerLetterConstants.TABLE_CONFIG_KEY] || {});
   const { [offerLetterConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageC
   }, [entityPager, setOfferLetterCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[offerLetterConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [offerLetterConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(offerLetterConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[offerLetterConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [offerLetterConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(offerLetterConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageC
 
   const actions: TableAction<IOfferLetterIndex>[] = useMemo(() => {
     const list: TableAction<IOfferLetterIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageC
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageC
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,14 +205,14 @@ export const useOfferLetterTableConfig = ({ setOfferLetterCount, setCurrentPageC
 // Export table columns for use in other components
 export const offerLetterTableColumns: TableColumn<IOfferLetterIndex>[] = [
   { key: 'offerLetterId', title: 'Offer Letter Id', dataIndex: 'offerLetterId', sortable: false },
-			{ key: 'candidateId', title: 'Candidate Id', dataIndex: 'candidateId', sortable: false },
-			{ key: 'jobOpeningId', title: 'Job Opening Id', dataIndex: 'jobOpeningId', sortable: false },
-			{ key: 'salaryOffered', title: 'Salary Offered', dataIndex: 'salaryOffered', sortable: false },
-			{ key: 'joiningDate', title: 'Joining Date', dataIndex: 'joiningDate', sortable: false },
-			{ key: 'termsAndCondition', title: 'Terms And Condition', dataIndex: 'termsAndCondition', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'issuedBy', title: 'Issued By', dataIndex: 'issuedBy', sortable: false },
-			{ key: 'approvedBy', title: 'Approved By', dataIndex: 'approvedBy', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'candidate', title: 'Candidate', dataIndex: 'candidateFirstName', sortable: false },
+  { key: 'jobTitle', title: 'Job Title', dataIndex: 'jobTitle', sortable: false },
+  { key: 'salaryOffered', title: 'Salary Offered', dataIndex: 'salaryOffered', sortable: false },
+  { key: 'joiningDate', title: 'Joining Date', dataIndex: 'joiningDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'termsAndCondition', title: 'Terms And Condition', dataIndex: 'termsAndCondition', sortable: false },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  // { key: 'issuedBy', title: 'Issued By', dataIndex: 'issuedBy', sortable: false },
+  // { key: 'approvedBy', title: 'Approved By', dataIndex: 'approvedBy', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];

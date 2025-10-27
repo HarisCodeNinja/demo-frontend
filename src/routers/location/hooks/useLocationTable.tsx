@@ -10,6 +10,7 @@ import locationTableConfigDefault from '../data/locationTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { ILocationIndex } from '../interface';
 import locationConstants from '../constants';
+import { formatDate } from '@/util/Time';
 
 interface UseLocationTableConfigProps {
   setLocationCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -210,6 +211,6 @@ export const useLocationTableConfig = ({ setLocationCount, setCurrentPageCount, 
 export const locationTableColumns: TableColumn<ILocationIndex>[] = [
   { key: 'locationId', title: 'Location Id', dataIndex: 'locationId', sortable: false },
 			{ key: 'locationName', title: 'Location Name', dataIndex: 'locationName', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => value ? formatDate(value) : '-' },
+			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => value ? formatDate(value) : '-' }
 ];

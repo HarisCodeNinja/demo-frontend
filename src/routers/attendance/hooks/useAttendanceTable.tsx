@@ -10,6 +10,7 @@ import attendanceTableConfigDefault from '../data/attendanceTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
 import { IAttendanceIndex } from '../interface';
 import attendanceConstants from '../constants';
+import { formatDate, formatDateTime } from '@/util/Time';
 
 interface UseAttendanceTableConfigProps {
   setAttendanceCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -20,10 +21,7 @@ interface UseAttendanceTableConfigProps {
 export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCount, filterKeys = {} }: UseAttendanceTableConfigProps) => {
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const columns: TableColumn<IAttendanceIndex>[] = useMemo(
-    () => attendanceTableColumns,
-    [],
-  );
+  const columns: TableColumn<IAttendanceIndex>[] = useMemo(() => attendanceTableColumns, []);
 
   const tableConfiguration = useAppSelector((state: RootState) => state.tableConfiguration[attendanceConstants.TABLE_CONFIG_KEY] || {});
   const { [attendanceConstants.ENTITY_KEY]: { primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -57,13 +55,13 @@ export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCou
   }, [entityPager, setAttendanceCount, setCurrentPageCount]);
 
   const handleDelete = useCallback(async () => {
-  if (!primaryKeys || !primaryKeys[attendanceConstants.PRIMARY_KEY]) {
-    console.error('Cannot delete: Missing primary keys');
-    return;
-  }
-  await deleteEntityMutation.mutateAsync(primaryKeys);
-  queryClient.invalidateQueries({ queryKey: [attendanceConstants.QUERY_KEY, queryParams], exact: false });
-  dispatch(resetSelectedObj(attendanceConstants.ENTITY_KEY));
+    if (!primaryKeys || !primaryKeys[attendanceConstants.PRIMARY_KEY]) {
+      console.error('Cannot delete: Missing primary keys');
+      return;
+    }
+    await deleteEntityMutation.mutateAsync(primaryKeys);
+    queryClient.invalidateQueries({ queryKey: [attendanceConstants.QUERY_KEY, queryParams], exact: false });
+    dispatch(resetSelectedObj(attendanceConstants.ENTITY_KEY));
   }, [deleteEntityMutation, primaryKeys, dispatch, queryParams, queryClient]);
 
   const visibleColumns = useMemo(() => {
@@ -132,7 +130,7 @@ export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCou
 
   const actions: TableAction<IAttendanceIndex>[] = useMemo(() => {
     const list: TableAction<IAttendanceIndex>[] = [];
-    
+
     list.push({
       key: 'view',
       icon: <Eye className="size-4" />,
@@ -145,7 +143,6 @@ export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCou
       },
     });
 
-    
     list.push({
       key: 'edit',
       icon: <Edit className="size-4" />,
@@ -158,7 +155,6 @@ export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCou
       },
     });
 
-    
     list.push({
       key: 'delete',
       icon: <Trash2 className="size-4 text-red-500" />,
@@ -209,12 +205,12 @@ export const useAttendanceTableConfig = ({ setAttendanceCount, setCurrentPageCou
 // Export table columns for use in other components
 export const attendanceTableColumns: TableColumn<IAttendanceIndex>[] = [
   { key: 'attendanceId', title: 'Attendance Id', dataIndex: 'attendanceId', sortable: false },
-			{ key: 'employeeId', title: 'Employee Id', dataIndex: 'employeeId', sortable: false },
-			{ key: 'attendanceDate', title: 'Attendance Date', dataIndex: 'attendanceDate', sortable: false },
-			{ key: 'checkInTime', title: 'Check In Time', dataIndex: 'checkInTime', sortable: false },
-			{ key: 'checkOutTime', title: 'Check Out Time', dataIndex: 'checkOutTime', sortable: false },
-			{ key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
-			{ key: 'totalHour', title: 'Total Hour', dataIndex: 'totalHour', sortable: false },
-			{ key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false },
-			{ key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false }
+  { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
+  { key: 'attendanceDate', title: 'Attendance Date', dataIndex: 'attendanceDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'checkInTime', title: 'Check In Time', dataIndex: 'checkInTime', sortable: false, render: (value) => (value ? formatDateTime(value) : '-') },
+  { key: 'checkOutTime', title: 'Check Out Time', dataIndex: 'checkOutTime', sortable: false, render: (value) => (value ? formatDateTime(value) : '-') },
+  { key: 'status', title: 'Status', dataIndex: 'status', sortable: false },
+  { key: 'totalHour', title: 'Total Hour', dataIndex: 'totalHour', sortable: false },
+  { key: 'createdAt', title: 'Created At', dataIndex: 'createdAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
+  { key: 'updatedAt', title: 'Updated At', dataIndex: 'updatedAt', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
 ];
