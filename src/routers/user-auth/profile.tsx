@@ -138,8 +138,8 @@ const UserProfilePage: React.FC = () => {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your account settings and preferences</p>
+        <h1 className="text-3xl font-bold text-foreground">Profile Settings</h1>
+        <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -150,11 +150,11 @@ const UserProfilePage: React.FC = () => {
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
                 Personal Information
-                {isEditing && <span className="text-sm text-blue-600 font-normal">(Editing)</span>}
+                {isEditing && <span className="text-sm text-info font-normal">(Editing)</span>}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">{CleanError(error)}</div>}
+              {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">{CleanError(error)}</div>}
               <Form {...form}>
                 <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -300,16 +300,16 @@ const UserProfilePage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="p-4 border rounded-lg bg-gray-50">
+               <div className="p-4 border rounded-lg bg-muted/30">
                  <div className="space-y-3">
                    <div>
-                     <h3 className="font-medium text-gray-900">Change Password</h3>
-                     <p className="text-sm text-gray-600 mt-1">Update your password</p>
+                     <h3 className="font-medium text-foreground">Change Password</h3>
+                     <p className="text-sm text-muted-foreground mt-1">Update your password</p>
                    </div>
                    <Button 
                      variant="outline" 
                      onClick={() => navigate('/userChangePassword')}
-                     className="hover:bg-gray-100"
+                     className="hover:bg-muted"
                    >
                      Change Password
                    </Button>

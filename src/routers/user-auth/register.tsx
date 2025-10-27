@@ -99,7 +99,7 @@ const UserRegisterPage: React.FC = () => {
           <CardDescription className="text-center">Join thousands of developers building amazing applications</CardDescription>
         </CardHeader>
         <CardContent>
-          {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">{CleanError(error)}</div>}
+          {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">{CleanError(error)}</div>}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFinish)} className="flex flex-col gap-4">
 			<FormField

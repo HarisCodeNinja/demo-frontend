@@ -75,8 +75,8 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
       disabled={disabled || !editor}
       title={title}
       className={cn(
-        "h-8 w-8 p-0 border border-gray-300 rounded hover:bg-gray-100 transition-colors flex items-center justify-center",
-        isActive ? "bg-blue-100 border-blue-400 text-blue-700" : "",
+        "h-8 w-8 p-0 border border-border rounded hover:bg-muted transition-colors flex items-center justify-center",
+        isActive ? "bg-info/15 border-info text-info" : "",
         disabled || !editor ? "opacity-50 cursor-not-allowed" : ""
       )}
     >
@@ -86,10 +86,10 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
 
 
   return (
-    <div className={cn("border border-gray-300 rounded-lg bg-white", className)} ref={ref}>
-      <div className="border-b border-gray-200 bg-gray-50 p-2 rounded-t-lg">
+    <div className={cn("border border-border rounded-lg bg-card", className)} ref={ref}>
+      <div className="border-b border-border bg-muted/30 p-2 rounded-t-lg">
         <div className="flex flex-wrap items-center gap-1">
-          <div className="flex items-center gap-1 border-r border-gray-300 pr-2 mr-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-2">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBold().run()}
               isActive={editor.isActive('bold')}
@@ -127,9 +127,9 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
             </ToolbarButton>
           </div>
 
-          <div className="flex items-center gap-1 border-r border-gray-300 pr-2 mr-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-2">
             <select
-              className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
+              className="text-sm border border-border rounded px-2 py-1 bg-card"
               value={
                 !editor ? '0' :
                 editor.isActive('heading', { level: 1 }) ? '1' :
@@ -155,7 +155,7 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
             </select>
           </div>
 
-          <div className="flex items-center gap-1 border-r border-gray-300 pr-2 mr-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-2">
             <ToolbarButton
               onClick={() => editor.chain().focus().setTextAlign('left').run()}
               isActive={editor.isActive({ textAlign: 'left' }) || (!editor.isActive({ textAlign: 'center' }) && !editor.isActive({ textAlign: 'right' }) && !editor.isActive({ textAlign: 'justify' }))}
@@ -186,7 +186,7 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
             </ToolbarButton>
           </div>
 
-          <div className="flex items-center gap-1 border-r border-gray-300 pr-2 mr-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-2">
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBulletList().run()}
               isActive={editor.isActive('bulletList')}
@@ -203,7 +203,7 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
             </ToolbarButton>
           </div>
 
-          <div className="flex items-center gap-1 border-r border-gray-300 pr-2 mr-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-2">
             <ToolbarButton
               onClick={addLink}
               isActive={editor.isActive('link')}
@@ -247,7 +247,7 @@ const TiptapEditor = forwardRef<HTMLDivElement, TiptapEditorProps>(({
 
       <EditorContent 
         editor={editor} 
-        className="min-h-[200px] [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_p]:mb-2 [&_li]:mb-1 [&_pre]:bg-gray-100 [&_pre]:border [&_pre]:border-gray-300 [&_pre]:rounded [&_pre]:p-3 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_code]:font-mono [&_code]:text-sm"
+        className="min-h-[200px] [&_h1]:text-2xl [&_h1]:font-bold [&_h2]:text-xl [&_h2]:font-bold [&_h3]:text-lg [&_h3]:font-bold [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic [&_p]:mb-2 [&_li]:mb-1 [&_pre]:bg-muted/50 [&_pre]:border [&_pre]:border-border [&_pre]:rounded [&_pre]:p-3 [&_pre]:my-2 [&_pre]:overflow-x-auto [&_code]:font-mono [&_code]:text-sm"
       />
     </div>
   );

@@ -157,9 +157,9 @@ export const useCandidateSkillTableConfig = ({ setCandidateSkillCount, setCurren
 
     list.push({
       key: 'delete',
-      icon: <Trash2 className="size-4 text-red-500" />,
+      icon: <Trash2 className="size-4 text-destructive" />,
       onClick: handleDeleteAction,
-      className: 'text-red-500',
+      className: 'text-destructive',
       permission: {
         scope: user?.scope || '',
         module: candidateSkillConstants.PERMISSIONS.MODULE,

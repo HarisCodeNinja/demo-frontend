@@ -19,7 +19,7 @@ const NotFoundPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader className="flex flex-col gap-4">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-info/15 text-info">
             <FileSearch className="h-10 w-10" />
           </div>
           <CardTitle className="text-2xl font-bold">Page Not Found</CardTitle>

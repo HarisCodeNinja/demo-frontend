@@ -17,7 +17,7 @@ export const ErrorSummary: React.FC<ErrorSummaryProps> = ({ error, className = "
   if (!error) return null;
 
   return (
-    <div className={`mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm ${className}`}>
+    <div className={`mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm ${className}`}>
       {CleanError(error)}
     </div>
   );

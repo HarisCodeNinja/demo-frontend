@@ -188,7 +188,7 @@ const { employees: interviewer  } = useEmployeeOptions();
                     )}
                 />
 				<div className="text-sm text-muted-foreground">
-					<span className="text-red-500">*</span> Required fields
+					<span className="text-destructive">*</span> Required fields
 				</div>
 			</div>
 		</Form>

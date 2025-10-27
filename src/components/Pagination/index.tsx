@@ -2,9 +2,9 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Pagination = ({ page, pageSize, totalPages, totalCount, onPageChange }: any) => (
-  <div className="bg-white p-4 rounded-lg border mt-4">
+  <div className="bg-card p-4 rounded-lg border mt-4">
     <div className="flex flex-col space-y-4">
-      <div className="text-sm text-gray-600 text-center">
+      <div className="text-sm text-muted-foreground text-center">
         Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, totalCount)} of {totalCount} entries
       </div>
 

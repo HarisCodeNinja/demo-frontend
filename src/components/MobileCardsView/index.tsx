@@ -63,10 +63,10 @@ function MobileCardsView<T>({
 
       {data.length === 0 && (
         <div className="text-center py-12">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            {EmptyStateIcon && <EmptyStateIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />}
-            <p className="text-gray-500 font-medium">No {entityName.toLowerCase()}s found</p>
-            <p className="text-sm text-gray-400 mt-1">Try adjusting your search criteria</p>
+          <div className="bg-card p-6 rounded-xl shadow-sm border border-border">
+            {EmptyStateIcon && <EmptyStateIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />}
+            <p className="text-muted-foreground font-medium">No {entityName.toLowerCase()}s found</p>
+            <p className="text-sm text-muted-foreground mt-1">Try adjusting your search criteria</p>
           </div>
         </div>
       )}

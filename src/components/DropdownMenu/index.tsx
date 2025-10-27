@@ -29,7 +29,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 top-8 z-20 bg-white border rounded-md shadow-lg min-w-32">
+          <div className="absolute right-0 top-8 z-20 bg-card border rounded-md shadow-lg min-w-32">
             {children[1]}
           </div>
         </>
@@ -59,7 +59,7 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   className = '' 
 }) => (
   <button 
-    className={`w-full px-3 py-2 text-left hover:bg-gray-100 flex items-center ${className}`} 
+    className={`w-full px-3 py-2 text-left hover:bg-muted flex items-center ${className}`} 
     onClick={onClick}
   >
     {children}

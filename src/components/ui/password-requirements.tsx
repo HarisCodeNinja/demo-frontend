@@ -17,11 +17,11 @@ const getPasswordStrength = (password: string): { score: number; label: string; 
   if (/[@$!%*?&]/.test(password)) score += 1;
   
   const strengthMap = [
-    { label: 'Very Weak', color: 'bg-red-500' },
-    { label: 'Weak', color: 'bg-orange-500' },
-    { label: 'Fair', color: 'bg-yellow-500' },
-    { label: 'Good', color: 'bg-blue-500' },
-    { label: 'Strong', color: 'bg-green-500' }
+    { label: 'Very Weak', color: 'bg-destructive' },
+    { label: 'Weak', color: 'bg-destructive' },
+    { label: 'Fair', color: 'bg-destructive/80' },
+    { label: 'Good', color: 'bg-info' },
+    { label: 'Strong', color: 'bg-success' }
   ];
   
   return {
@@ -59,7 +59,7 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
               key={bar}
               className={cn(
                 "h-1 flex-1 rounded-full transition-all duration-300",
-                bar <= strength.score ? strength.color : "bg-gray-200"
+                bar <= strength.score ? strength.color : "bg-muted"
               )}
             />
           ))}
@@ -67,7 +67,7 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
         
         {/* Error Message */}
         {!isValid && (
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-destructive">
             Use at least 8 characters with a mix of uppercase, lowercase, numbers, and special symbols (e.g., @, #, $).
           </p>
         )}
@@ -84,12 +84,12 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
             key={bar}
             className={cn(
               "h-1 flex-1 rounded-full transition-all duration-300",
-              bar <= strength.score ? strength.color : "bg-gray-200"
+              bar <= strength.score ? strength.color : "bg-muted"
             )}
           />
         ))}
       </div>
-      <p className="text-xs text-gray-600">
+      <p className="text-xs text-muted-foreground">
         Password strength: {strength.label}
       </p>
     </div>

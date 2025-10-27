@@ -11,7 +11,7 @@ const NotAuthPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader className="flex flex-col gap-4 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-destructive/15 text-destructive">
             <Lock className="h-10 w-10" />
           </div>
           <CardTitle className="text-2xl font-bold text-center mx-auto">Access Denied</CardTitle>

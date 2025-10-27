@@ -116,7 +116,7 @@ export const NumberFilter: React.FC<NumberFilterProps> = ({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <Label className="text-sm font-medium text-gray-700">
+      <Label className="text-sm font-medium text-foreground">
         {label}
       </Label>
       
@@ -170,7 +170,7 @@ export const NumberFilter: React.FC<NumberFilterProps> = ({
           {hasValue && !disabled && (
             <button
               type="button"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center z-10 hover:bg-gray-100 transition-colors"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center z-10 hover:bg-muted transition-colors"
               onClick={handleClear}
               onMouseDown={(e) => {
                 e.preventDefault();

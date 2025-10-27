@@ -54,6 +54,10 @@ button:not(:disabled) {
   --accent-foreground: oklch(0.3394 0.0441 1.7583);
   --destructive: oklch(0.6332 0.1578 22.6734);
   --destructive-foreground: oklch(0.9777 0.0041 301.4256);
+  --success: oklch(0.65 0.15 145);
+  --success-foreground: oklch(0.98 0.005 145);
+  --info: oklch(0.60 0.15 240);
+  --info-foreground: oklch(0.98 0.005 240);
   --border: oklch(0.8447 0.0226 300.1421);
   --input: oklch(0.9329 0.0124 301.2783);
   --ring: oklch(0.6104 0.0767 299.7335);
@@ -109,6 +113,10 @@ button:not(:disabled) {
   --accent-foreground: oklch(0.8391 0.0692 2.6681);
   --destructive: oklch(0.6875 0.1420 21.4566);
   --destructive-foreground: oklch(0.2166 0.0215 292.8474);
+  --success: oklch(0.70 0.15 145);
+  --success-foreground: oklch(0.20 0.02 145);
+  --info: oklch(0.70 0.12 240);
+  --info-foreground: oklch(0.20 0.02 240);
   --border: oklch(0.3063 0.0359 293.3367);
   --input: oklch(0.2847 0.0346 291.2726);
   --ring: oklch(0.7058 0.0777 302.0489);
@@ -162,6 +170,10 @@ button:not(:disabled) {
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

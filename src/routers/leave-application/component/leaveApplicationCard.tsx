@@ -27,16 +27,16 @@ export const LeaveApplicationCard: React.FC<LeaveApplicationCardProps> = ({ reco
   });
 
   return (
-    <Card className="mb-4 hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-pink-200">
+    <Card className="mb-4 hover:shadow-lg transition-all duration-300 bg-card border border-border hover:border-primary/30">
       <CardContent className="p-5">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md">
               {getInitials()}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 text-lg truncate">{record.leaveApplicationId || 'Unknown LeaveApplication'}</h3>
-              <p className="text-sm text-gray-500 flex items-center mt-1">
+              <h3 className="font-semibold text-foreground text-lg truncate">{record.leaveApplicationId || 'Unknown LeaveApplication'}</h3>
+              <p className="text-sm text-muted-foreground flex items-center mt-1">
                 <Hash className="w-3 h-3 mr-1 flex-shrink-0" />
                 <span className="truncate">{record.leaveApplicationId || 'N/A'}</span>
               </p>
@@ -45,14 +45,14 @@ export const LeaveApplicationCard: React.FC<LeaveApplicationCardProps> = ({ reco
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-center text-sm text-gray-700 bg-gradient-to-r from-pink-50 to-purple-50 p-3 rounded-lg">
-            <Heart className="w-4 h-4 mr-3 text-pink-500 flex-shrink-0" />
+          <div className="flex items-center text-sm text-foreground bg-gradient-to-r from-primary/5 to-primary/10 p-3 rounded-lg">
+            <Heart className="w-4 h-4 mr-3 text-accent flex-shrink-0" />
             <span className="truncate font-medium">{record.leaveApplicationId}</span>
           </div>
         </div>
 
         {filteredActions.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="mt-4 pt-4 border-t border-border/50">
             <div className="flex gap-2">
               {filteredActions.map((action: TableAction<ILeaveApplicationIndex>, index: number) => (
                 <Button

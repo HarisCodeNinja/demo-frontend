@@ -46,8 +46,8 @@ const GenericTable: React.FC<TableProps> = ({
 
     return (
       <div className="flex items-center ml-1">
-        {direction === 'asc' ? <ArrowUp className="w-4 h-4 text-blue-600" /> : <ArrowDown className="w-4 h-4 text-blue-600" />}
-        {sortIndex && sortIndex > 1 && <span className="text-xs bg-blue-100 text-blue-600 rounded-full w-4 h-4 flex items-center justify-center ml-1">{sortIndex}</span>}
+        {direction === 'asc' ? <ArrowUp className="w-4 h-4 text-info" /> : <ArrowDown className="w-4 h-4 text-info" />}
+        {sortIndex && sortIndex > 1 && <span className="text-xs bg-info/15 text-info rounded-full w-4 h-4 flex items-center justify-center ml-1">{sortIndex}</span>}
       </div>
     );
   };

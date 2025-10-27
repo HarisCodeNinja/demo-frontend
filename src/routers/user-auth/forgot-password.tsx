@@ -70,7 +70,7 @@ const handleFinish = async (values: ForgotPasswordFormData) => {
 };
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div className="min-h-screen flex items-center justify-center bg-muted/30 py-12 px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
@@ -82,15 +82,15 @@ const handleFinish = async (values: ForgotPasswordFormData) => {
 					{emailSent || isSuccess ? (
 						<div className="text-center space-y-4">
 							<div className="flex justify-center">
-								<div className="size-12 bg-green-100 rounded-full flex items-center justify-center">
-									<svg className="size-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<div className="size-12 bg-success/15 rounded-full flex items-center justify-center">
+									<svg className="size-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
 									</svg>
 								</div>
 							</div>
 							<div className="space-y-2">
-								<h3 className="text-lg font-semibold text-green-800">Email Sent Successfully</h3>
-								<p className="text-green-700">A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.</p>
+								<h3 className="text-lg font-semibold text-success">Email Sent Successfully</h3>
+								<p className="text-success">A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.</p>
 							</div>
 							<div className="pt-4">
 								<Link to="/userLogin" className="inline-flex items-center text-primary hover:underline">
@@ -133,7 +133,7 @@ const handleFinish = async (values: ForgotPasswordFormData) => {
 											<FormLabel>Email Address</FormLabel>
 											<FormControl>
 												<div className="relative">
-													<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 size-4" />
+													<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
 													<Input
 														placeholder="Enter your email"
 														className="ps-10"

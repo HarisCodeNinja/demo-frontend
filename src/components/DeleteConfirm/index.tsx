@@ -54,8 +54,8 @@ const DeleteConfirm: React.FC<DeleteConfirmProps> = ({
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-4 py-6 sm:flex-row sm:items-start">
-          <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/20">
-            <AlertTriangle className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+          <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-destructive/15 dark:bg-destructive/20">
+            <AlertTriangle className="h-6 w-6 text-destructive dark:text-destructive" />
           </div>
           
           <div className="flex-1 space-y-2 text-center sm:text-left">

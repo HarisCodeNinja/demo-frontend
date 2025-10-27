@@ -94,7 +94,7 @@ export const InfiniteScrollDropdown: React.FC<InfiniteScrollDropdownProps> = ({
 
   return (
     <div className="space-y-2">
-      {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
+      {label && <label className="text-sm font-medium text-foreground">{label}</label>}
 
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>

@@ -47,14 +47,14 @@ const FilePreview: React.FC<FilePreviewProps> = ({
               className="w-32 h-32 object-cover rounded-lg border shadow-sm"
             />
           ) : (
-            <div className="w-32 h-32 flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
+            <div className="w-32 h-32 flex flex-col items-center justify-center bg-gradient-to-br from-muted/30 to-muted/50 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl mb-1">
                 {getFileIcon(value.type, value.name)}
               </div>
-              <div className="text-xs text-center px-2 break-all font-medium text-gray-700">
+              <div className="text-xs text-center px-2 break-all font-medium text-foreground">
                 {value.name.length > 15 ? `${value.name.substring(0, 15)}...` : value.name}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-muted-foreground mt-1">
                 {(value.size / 1024 / 1024).toFixed(1)} MB
               </div>
             </div>
@@ -96,14 +96,14 @@ const FilePreview: React.FC<FilePreviewProps> = ({
               className="w-32 h-32 object-cover rounded-lg border shadow-sm"
             />
           ) : (
-            <div className="w-32 h-32 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border shadow-sm cursor-pointer hover:shadow-md hover:from-blue-100 hover:to-blue-200 transition-all duration-200"
+            <div className="w-32 h-32 flex flex-col items-center justify-center bg-gradient-to-br from-muted/30 to-muted/50 rounded-lg border shadow-sm cursor-pointer hover:shadow-md hover:from-muted/50 hover:to-muted transition-all duration-200"
                  onClick={() => openFileInNewTab(fileUrl, fileName)}
                  title="Click to open file">
               <div className="text-4xl mb-1">{fileInfo.icon}</div>
-              <div className="text-xs text-center px-2 break-all font-medium text-gray-700">
+              <div className="text-xs text-center px-2 break-all font-medium text-foreground">
                 {fileName.length > 15 ? `${fileName.substring(0, 15)}...` : fileName}
               </div>
-              <div className="text-xs text-blue-600 mt-1 flex items-center">
+              <div className="text-xs text-info mt-1 flex items-center">
                 <ExternalLink className="h-3 w-3 me-1" />
                 Open
               </div>
@@ -126,7 +126,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
               type="button"
               variant="outline"
               size="sm"
-              className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full p-0 bg-white shadow-md hover:bg-gray-50"
+              className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full p-0 bg-card shadow-md hover:bg-muted/50"
               onClick={() => openFileInNewTab(fileUrl, fileName)}
               title="Open in new tab"
             >
@@ -143,7 +143,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
             {!fileInfo.isImage && (
               <button
                 type="button"
-                className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center mt-1"
+                className="text-xs text-info hover:text-info underline flex items-center mt-1"
                 onClick={() => openFileInNewTab(fileUrl, fileName)}
               >
                 <ExternalLink className="h-3 w-3 me-1" />

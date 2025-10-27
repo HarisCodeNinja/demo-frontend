@@ -85,7 +85,7 @@ const handleFinish = async (values: ResetPasswordFormData) => {
 };
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+		<div className="min-h-screen flex items-center justify-center bg-muted/30 py-12 px-4 sm:px-6 lg:px-8">
 			<Card className="w-full max-w-md">
 				<CardHeader className="text-center">
 					<CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
@@ -97,15 +97,15 @@ const handleFinish = async (values: ResetPasswordFormData) => {
 					{passwordReset || isSuccess ? (
 						<div className="text-center space-y-4">
 							<div className="flex justify-center">
-								<div className="size-12 bg-green-100 rounded-full flex items-center justify-center">
-									<svg className="size-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<div className="size-12 bg-success/15 rounded-full flex items-center justify-center">
+									<svg className="size-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
 									</svg>
 								</div>
 							</div>
 							<div className="space-y-2">
-								<h3 className="text-lg font-semibold text-green-800">Password Reset Successful</h3>
-								<p className="text-green-700">Your password has been successfully reset. You can now log in with your new password.</p>
+								<h3 className="text-lg font-semibold text-success">Password Reset Successful</h3>
+								<p className="text-success">Your password has been successfully reset. You can now log in with your new password.</p>
 							</div>
 							<div className="pt-4">
 								<Link to="/userLogin" className="inline-flex items-center text-primary hover:underline">

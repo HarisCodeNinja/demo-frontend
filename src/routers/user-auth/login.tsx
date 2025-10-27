@@ -73,7 +73,7 @@ const UserLoginPage: React.FC = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFinish)} className="flex flex-col gap-4">
               {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
+                <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-md text-destructive text-sm">
                   {CleanError(error)}
                 </div>
               )}

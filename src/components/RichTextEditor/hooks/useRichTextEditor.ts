@@ -35,7 +35,7 @@ export const useRichTextEditor = ({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 underline cursor-pointer',
+          class: 'text-info underline cursor-pointer',
         },
       }),
       Underline,
