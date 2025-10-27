@@ -16,7 +16,7 @@ export function EmployeeDistributionChart({ data }: EmployeeDistributionChartPro
   const chartConfig = {
     employees: {
       label: 'Employees',
-      color: 'hsl(var(--chart-1))',
+      color: '#8b5cf6',
     },
   };
 
@@ -29,17 +29,20 @@ export function EmployeeDistributionChart({ data }: EmployeeDistributionChartPro
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
               dataKey="department"
               angle={-45}
               textAnchor="end"
               height={100}
-              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
             />
-            <YAxis />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="employees" fill="var(--color-employees)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="employees" fill={chartConfig.employees.color} radius={[8, 8, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>

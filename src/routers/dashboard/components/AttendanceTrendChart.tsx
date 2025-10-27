@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { AttendanceStats } from '../interface';
 
 interface AttendanceTrendChartProps {
@@ -18,15 +18,15 @@ export function AttendanceTrendChart({ data }: AttendanceTrendChartProps) {
   const chartConfig = {
     Present: {
       label: 'Present',
-      color: 'hsl(var(--chart-1))',
+      color: '#10b981',
     },
     Absent: {
       label: 'Absent',
-      color: 'hsl(var(--chart-2))',
+      color: '#ef4444',
     },
     Late: {
       label: 'Late',
-      color: 'hsl(var(--chart-3))',
+      color: '#f59e0b',
     },
   };
 
@@ -39,13 +39,41 @@ export function AttendanceTrendChart({ data }: AttendanceTrendChartProps) {
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
+            />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Line type="monotone" dataKey="Present" stroke="var(--color-Present)" strokeWidth={2} />
-            <Line type="monotone" dataKey="Absent" stroke="var(--color-Absent)" strokeWidth={2} />
-            <Line type="monotone" dataKey="Late" stroke="var(--color-Late)" strokeWidth={2} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Line
+              type="monotone"
+              dataKey="Present"
+              stroke={chartConfig.Present.color}
+              strokeWidth={2}
+              dot={{ fill: chartConfig.Present.color, r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Absent"
+              stroke={chartConfig.Absent.color}
+              strokeWidth={2}
+              dot={{ fill: chartConfig.Absent.color, r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Late"
+              stroke={chartConfig.Late.color}
+              strokeWidth={2}
+              dot={{ fill: chartConfig.Late.color, r: 4 }}
+              activeDot={{ r: 6 }}
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>

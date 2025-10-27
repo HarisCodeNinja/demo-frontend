@@ -16,7 +16,7 @@ export function MonthlyLeaveChart({ data }: MonthlyLeaveChartProps) {
   const chartConfig = {
     leaves: {
       label: 'Leave Applications',
-      color: 'hsl(var(--chart-2))',
+      color: '#06b6d4',
     },
   };
 
@@ -29,16 +29,28 @@ export function MonthlyLeaveChart({ data }: MonthlyLeaveChartProps) {
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <AreaChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
+            <defs>
+              <linearGradient id="leavesGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={chartConfig.leaves.color} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={chartConfig.leaves.color} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
+            />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Area
               type="monotone"
               dataKey="leaves"
-              stroke="var(--color-leaves)"
-              fill="var(--color-leaves)"
-              fillOpacity={0.2}
+              stroke={chartConfig.leaves.color}
+              strokeWidth={2}
+              fill="url(#leavesGradient)"
             />
           </AreaChart>
         </ChartContainer>

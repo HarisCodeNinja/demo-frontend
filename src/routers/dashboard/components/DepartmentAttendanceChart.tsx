@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { DepartmentWiseAttendance } from '../interface';
 
 interface DepartmentAttendanceChartProps {
@@ -18,11 +18,11 @@ export function DepartmentAttendanceChart({ data }: DepartmentAttendanceChartPro
   const chartConfig = {
     present: {
       label: 'Present',
-      color: 'hsl(var(--chart-1))',
+      color: '#10b981',
     },
     absent: {
       label: 'Absent',
-      color: 'hsl(var(--chart-2))',
+      color: '#ef4444',
     },
   };
 
@@ -35,19 +35,22 @@ export function DepartmentAttendanceChart({ data }: DepartmentAttendanceChartPro
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
               dataKey="department"
               angle={-45}
               textAnchor="end"
               height={100}
-              tick={{ fontSize: 12 }}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
             />
-            <YAxis />
+            <YAxis tickLine={false} axisLine={false} tickMargin={8} className="text-xs" />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Legend />
-            <Bar dataKey="present" fill="var(--color-present)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="absent" fill="var(--color-absent)" radius={[4, 4, 0, 0]} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Bar dataKey="present" fill={chartConfig.present.color} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="absent" fill={chartConfig.absent.color} radius={[8, 8, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
