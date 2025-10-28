@@ -13,6 +13,11 @@ export const getSelectEmployees = async (queryParams: IEmployeeQueryParams | nul
   return await apiClient.get<CommonSelect[]>(url);
 };
 
+export const getSelectManagers = async (queryParams: IEmployeeQueryParams | null) => {
+  const url = `/employees/select-managers${queryParams !== null ? '?' + CreateQueryParams(queryParams) : ''}`;
+  return await apiClient.get<CommonSelect[]>(url);
+};
+
 export const getEmployeeDetails = async (employeeId: string) => {
   const url = `/employees/detail/${employeeId}`;
   return await apiClient.get<IEmployeeSingle>(url);
@@ -50,4 +55,3 @@ export const uploadEmployee = async (data: FormData) => {
 export const deleteUploadEmployee = async (data: IEmployeePrimaryKeys & { property: string }) => {
   return await apiClient.delete<void>(`/employees/upload/${data.employeeId}`, { data });
 };
-

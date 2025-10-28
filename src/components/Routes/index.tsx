@@ -1,23 +1,24 @@
-import React , { Suspense } from 'react'
+import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import RequireAuth from '@/util/RequireAuth';
-import HomePage from '@/routers/common/home'
-import NotAuthPage from '@/routers/common/notAuth'
-import NotFoundPage from '@/routers/common/notFound'
+import HomePage from '@/routers/common/home';
+import NotAuthPage from '@/routers/common/notAuth';
+import NotFoundPage from '@/routers/common/notFound';
 import { useAppSelector } from '@/store';
 import { areaConfigurations } from '@/config/areas/areaConfig';
 import { AppArea } from '@/hooks/useCurrentArea';
+import { Spinner } from '../ui/spinner';
 
 interface AppProps {
-	doc: HTMLElement
+  doc: HTMLElement;
 }
-const AppRoutes : React.FC<AppProps> = ({doc}) => {
-	const {dir, isLoggedIn, user, area} = useAppSelector((state: any) => state.session);
-	 doc.dir = dir  === 'rtl' ? 'rtl' : 'ltr';
+const AppRoutes: React.FC<AppProps> = ({ doc }) => {
+  const { dir, isLoggedIn, user, area } = useAppSelector((state: any) => state.session);
+  doc.dir = dir === 'rtl' ? 'rtl' : 'ltr';
 
-const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'user:employee'];
+  const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'user:employee'];
 
- // Helper function to render routes for a specific area
+  // Helper function to render routes for a specific area
   const renderAreaRoutes = (areaKey: AppArea) => {
     const config = areaConfigurations[areaKey];
     const Layout = config.layout;
@@ -34,7 +35,12 @@ const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'u
                 key={index}
                 path={route.path}
                 element={
-                  <Suspense fallback={<div>Loading...</div>}>
+                  <Suspense
+                    fallback={
+                      <div className="flex items-center justify-center h-1/2">
+                        <Spinner />
+                      </div>
+                    }>
                     <route.component />
                   </Suspense>
                 }
@@ -47,7 +53,12 @@ const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'u
               key={index}
               path={route.path}
               element={
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center h-1/2">
+                      <Spinner />
+                    </div>
+                  }>
                   <route.component />
                 </Suspense>
               }
@@ -58,16 +69,13 @@ const defaultAreaAccess: string[] = ['user:admin', 'user:hr', 'user:manager', 'u
         <Route key="notfound" path="*" element={<NotFoundPage />} />
       </Route>
     );
-  }; 
+  };
 
-
-return (	 
+  return (
     <Routes>
-		   
-	{user && isLoggedIn && user.scope.some((role:string) => defaultAreaAccess.includes(role)) && renderAreaRoutes('default')}
-			
-			{!isLoggedIn && renderAreaRoutes('public')}
-			 
+      {user && isLoggedIn && user.scope.some((role: string) => defaultAreaAccess.includes(role)) && renderAreaRoutes('default')}
+
+      {!isLoggedIn && renderAreaRoutes('public')}
     </Routes>
   );
 };

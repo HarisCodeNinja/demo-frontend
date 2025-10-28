@@ -33,48 +33,41 @@ const UserViewController: React.FC<ViewProps> = ({}) => {
       )}
       {!isLoading && user && (
         <div className="grid grid-cols-1 gap-6 items-start">
-        <div className="space-y-2">
+          {/* <div className="space-y-2">
           <Label>User Id</Label>
           <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.userId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Email</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.email ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Username</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.username ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Password</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.password ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Role</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.role ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Created At</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.createdAt ? new Date(user?.data?.createdAt).toLocaleDateString() : '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Updated At</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.updatedAt ? new Date(user?.data?.updatedAt).toLocaleDateString() : '-'}</div>
-        </div>
+        </div> */}
+          <div className="space-y-2">
+            <Label>Email</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.email ?? '-'}</div>
+          </div>
+          <div className="space-y-2">
+            <Label>Username</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.username ?? '-'}</div>
+          </div>
+          {/* <div className="space-y-2">
+            <Label>Password</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.password ?? '-'}</div>
+          </div> */}
+          <div className="space-y-2">
+            <Label>Role</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.role ?? '-'}</div>
+          </div>
+          <div className="space-y-2">
+            <Label>Created At</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.createdAt ? new Date(user?.data?.createdAt).toLocaleDateString() : '-'}</div>
+          </div>
+          <div className="space-y-2">
+            <Label>Updated At</Label>
+            <div className="flex items-center text-sm bg-muted p-3 rounded-md">{user?.data?.updatedAt ? new Date(user?.data?.updatedAt).toLocaleDateString() : '-'}</div>
+          </div>
         </div>
       )}
     </>
   );
 
   return (
-    <Controls
-      title={`${USER_CONSTANTS.ENTITY_NAME} Details`}
-      open={showView}
-      onClose={handleClose}
-      type="modal"
-      width={800}
-      loading={isLoading}
-    >
+    <Controls title={`${USER_CONSTANTS.ENTITY_NAME} Details`} open={showView} onClose={handleClose} type="modal" width={800} loading={isLoading}>
       <Content />
     </Controls>
   );

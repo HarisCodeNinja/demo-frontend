@@ -17,45 +17,18 @@ interface DatePickerProps {
   disabled?: boolean;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-  value,
-  onChange,
-  label = 'Select Date',
-  placeholder = 'Pick a date',
-  className,
-  disabled = false,
-}) => {
-  const {
-    isOpen,
-    setIsOpen,
-    currentMonth,
-    setCurrentMonth,
-    handleDateSelect,
-    handleClear,
-    handleMonthChange,
-    handleYearChange,
-    yearOptions,
-    monthOptions,
-  } = useDatePicker({ value, onChange });
+export const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, label = 'Select Date', placeholder = 'Pick a date', className, disabled = false }) => {
+  const { isOpen, setIsOpen, currentMonth, setCurrentMonth, handleDateSelect, handleClear, handleMonthChange, handleYearChange, yearOptions, monthOptions } = useDatePicker({
+    value,
+    onChange,
+  });
 
   return (
     <div className={cn('space-y-2', className)}>
-      {label && (
-        <label className="text-sm font-medium text-gray-700">
-          {label}
-        </label>
-      )}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <div className="relative">
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                'w-full justify-start text-left font-normal',
-                !value && 'text-muted-foreground'
-              )}
-              disabled={disabled}
-            >
+            <Button variant="outline" className={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground')} disabled={disabled}>
               <CalendarIcon className="mr-2 h-4 w-4" />
               {value ? format(value, 'PPP') : placeholder}
             </Button>
@@ -68,8 +41,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-              }}
-            >
+              }}>
               <X className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
             </button>
           )}
@@ -82,20 +54,20 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {monthOptions.map(option => (
+                  {monthOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={currentMonth.getFullYear().toString()} onValueChange={handleYearChange}>
                 <SelectTrigger className="w-[100px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {yearOptions.map(year => (
+                  {yearOptions.map((year) => (
                     <SelectItem key={year} value={year.toString()}>
                       {year}
                     </SelectItem>
@@ -104,15 +76,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               </Select>
             </div>
           </div>
-          
-          <Calendar
-            mode="single"
-            selected={value}
-            onSelect={handleDateSelect}
-            month={currentMonth}
-            onMonthChange={setCurrentMonth}
-            initialFocus
-          />
+
+          <Calendar mode="single" selected={value} onSelect={handleDateSelect} month={currentMonth} onMonthChange={setCurrentMonth} initialFocus />
         </PopoverContent>
       </Popover>
     </div>
