@@ -8,7 +8,7 @@ import { Trash2, Edit, Eye } from 'lucide-react';
 import { getJobOpeningSkills, deleteJobOpeningSkill } from '../service';
 import jobOpeningSkillTableConfigDefault from '../data/jobOpeningSkillTableConfigDefault';
 import { TableAction, TableColumn } from '@/types/table';
-import { IJobOpeningSkillIndex } from '../interface';
+import { IJobOpeningSkillIndex, IJobOpeningSkillQueryParams } from '../interface';
 import jobOpeningSkillConstants from '../constants';
 import { formatDate } from '@/util/Time';
 
@@ -37,7 +37,7 @@ export const useJobOpeningSkillTableConfig = ({ setJobOpeningSkillCount, setCurr
 
   const { data: entityResponse, isFetching: isLoading } = useQuery({
     queryKey: [jobOpeningSkillConstants.QUERY_KEY, queryParams],
-    queryFn: () => getJobOpeningSkills(queryParams as any),
+    queryFn: () => getJobOpeningSkills(queryParams as IJobOpeningSkillQueryParams),
     enabled: Boolean(queryParams),
   });
 

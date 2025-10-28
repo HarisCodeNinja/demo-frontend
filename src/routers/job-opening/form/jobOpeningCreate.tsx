@@ -9,9 +9,7 @@ import { useDesignationOptions } from '../../../option-hooks/useDesignationOptio
 import { useLocationOptions } from '../../../option-hooks/useLocationOptions';
 import DatePicker from '@/components/DatePicker';
 
-interface JobOpeningFormProps {}
-
-const JobOpeningForm: React.FC<JobOpeningFormProps> = ({}) => {
+const JobOpeningForm: React.FC = () => {
   const form = useFormContext<z.infer<typeof createJobOpeningPayloadValidator>>();
 
   const { departments: department } = useDepartmentOptions();
@@ -136,7 +134,7 @@ const JobOpeningForm: React.FC<JobOpeningFormProps> = ({}) => {
                   placeholder="Enter Required Experience"
                   {...fieldProps}
                   value={fieldProps.value?.toString() || ''}
-                  onChange={(e) => fieldProps.onChange(parseInt(e.target.value) || 0)}
+                  onChange={(e) => fieldProps.onChange(Number.parseInt(e.target.value) || 0)}
                 />
               </FormControl>
 

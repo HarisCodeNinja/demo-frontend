@@ -8,9 +8,7 @@ import { createAttendancePayloadValidator } from '../validation';
 import { useEmployeeOptions } from '../../../option-hooks/useEmployeeOptions';
 import DatePicker from '@/components/DatePicker';
 
-interface AttendanceFormProps {}
-
-const AttendanceForm: React.FC<AttendanceFormProps> = ({}) => {
+const AttendanceForm: React.FC = () => {
   const form = useFormContext<z.infer<typeof createAttendancePayloadValidator>>();
 
   const { employees: employee } = useEmployeeOptions();

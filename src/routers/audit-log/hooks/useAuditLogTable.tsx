@@ -132,42 +132,42 @@ export const useAuditLogTableConfig = ({ setAuditLogCount, setCurrentPageCount, 
   const actions: TableAction<IAuditLogIndex>[] = useMemo(() => {
     const list: TableAction<IAuditLogIndex>[] = [];
 
-    list.push({
-      key: 'view',
-      icon: <Eye className="size-4" />,
-      onClick: handleView,
-      permission: {
-        scope: user?.scope || '',
-        module: auditLogConstants.PERMISSIONS.MODULE,
-        resource: auditLogConstants.PERMISSIONS.RESOURCE,
-        action: auditLogConstants.PERMISSIONS.ACTIONS.VIEW,
+    list.push(
+      {
+        key: 'view',
+        icon: <Eye className="size-4" />,
+        onClick: handleView,
+        permission: {
+          scope: user?.scope || '',
+          module: auditLogConstants.PERMISSIONS.MODULE,
+          resource: auditLogConstants.PERMISSIONS.RESOURCE,
+          action: auditLogConstants.PERMISSIONS.ACTIONS.VIEW,
+        },
       },
-    });
-
-    list.push({
-      key: 'edit',
-      icon: <Edit className="size-4" />,
-      onClick: handleEdit,
-      permission: {
-        scope: user?.scope || '',
-        module: auditLogConstants.PERMISSIONS.MODULE,
-        resource: auditLogConstants.PERMISSIONS.RESOURCE,
-        action: auditLogConstants.PERMISSIONS.ACTIONS.EDIT,
+      {
+        key: 'edit',
+        icon: <Edit className="size-4" />,
+        onClick: handleEdit,
+        permission: {
+          scope: user?.scope || '',
+          module: auditLogConstants.PERMISSIONS.MODULE,
+          resource: auditLogConstants.PERMISSIONS.RESOURCE,
+          action: auditLogConstants.PERMISSIONS.ACTIONS.EDIT,
+        },
       },
-    });
-
-    list.push({
-      key: 'delete',
-      icon: <Trash2 className="size-4 text-red-500" />,
-      onClick: handleDeleteAction,
-      className: 'text-red-500',
-      permission: {
-        scope: user?.scope || '',
-        module: auditLogConstants.PERMISSIONS.MODULE,
-        resource: auditLogConstants.PERMISSIONS.RESOURCE,
-        action: auditLogConstants.PERMISSIONS.ACTIONS.DELETE,
+      {
+        key: 'delete',
+        icon: <Trash2 className="size-4 text-red-500" />,
+        onClick: handleDeleteAction,
+        className: 'text-red-500',
+        permission: {
+          scope: user?.scope || '',
+          module: auditLogConstants.PERMISSIONS.MODULE,
+          resource: auditLogConstants.PERMISSIONS.RESOURCE,
+          action: auditLogConstants.PERMISSIONS.ACTIONS.DELETE,
+        },
       },
-    });
+    );
 
     return list;
   }, [handleEdit, handleDeleteAction, handleView, user]);
@@ -215,14 +215,14 @@ export const auditLogTableColumns: TableColumn<IAuditLogIndex>[] = [
     title: 'Old Value',
     dataIndex: 'oldValue',
     sortable: false,
-    render: (value) => <JSONValueRenderer value={value} />
+    render: (value) => <JSONValueRenderer value={value} />,
   },
   {
     key: 'newValue',
     title: 'New Value',
     dataIndex: 'newValue',
     sortable: false,
-    render: (value) => <JSONValueRenderer value={value} />
+    render: (value) => <JSONValueRenderer value={value} />,
   },
   { key: 'ipAddress', title: 'Ip Address', dataIndex: 'ipAddress', sortable: false },
   { key: 'timestamp', title: 'Timestamp', dataIndex: 'timestamp', sortable: false, render: (value) => (value ? formatDateTime(value) : '-') },
