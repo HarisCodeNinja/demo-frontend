@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addLeaveApplication } from '../service';
-	import { createLeaveApplicationPayloadValidator } from '../validation';
-	import { ILeaveApplicationAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import LEAVEAPPLICATION_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import LeaveApplicationForm from '../form/leaveApplicationCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addLeaveApplication } from '../service';
+import { createLeaveApplicationPayloadValidator } from '../validation';
+import { ILeaveApplicationAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import LEAVEAPPLICATION_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import LeaveApplicationForm from '../form/leaveApplicationCreate';
 
 type CreateLeaveApplicationFormData = z.infer<typeof createLeaveApplicationPayloadValidator>;
 
@@ -66,12 +66,20 @@ const LeaveApplicationCreateDrawer: React.FC = () => {
   }, [addLeaveApplicationMutation]);
 
   return (
-  <Controls title={`Create ${LEAVEAPPLICATION_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addLeaveApplicationMutation.isPending}>
-    <FormProvider {...form}>
-      <LeaveApplicationForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${LEAVEAPPLICATION_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addLeaveApplicationMutation.isPending}>
+      <FormProvider {...form}>
+        <LeaveApplicationForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default LeaveApplicationCreateDrawer;

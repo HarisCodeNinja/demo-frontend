@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import SKILL_CONSTANTS from '../constants';
-
 
 const SkillUpdateDrawer: React.FC = () => {
   const { [SKILL_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const SkillUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.skillId),
   });
 
-
   const updateSkillMutation = useMutation({
     mutationFn: updateSkill,
   });
 
   const isLoading = isLoadingSkill || updateSkillMutation.isPending;
   const form = useForm<z.infer<typeof updateSkillPayloadValidator>>({
-  resolver: zodResolver(updateSkillPayloadValidator),
-  defaultValues: getDefaultFormValues(updateSkillPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateSkillPayloadValidator),
+    defaultValues: getDefaultFormValues(updateSkillPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (skillResponse?.data) {
@@ -46,29 +44,37 @@ const SkillUpdateDrawer: React.FC = () => {
   }, [skillResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateSkillPayloadValidator>) => {
-    try {
-      await updateSkillMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [SKILL_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateSkillMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateSkillPayloadValidator>) => {
+      try {
+        await updateSkillMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [SKILL_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateSkillMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateSkillPayloadValidator));
-  dispatch(resetSelectedObj(SKILL_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateSkillPayloadValidator));
+    dispatch(resetSelectedObj(SKILL_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${SKILL_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <SkillUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${SKILL_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <SkillUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

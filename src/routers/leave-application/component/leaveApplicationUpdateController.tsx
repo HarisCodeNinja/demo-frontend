@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import LEAVEAPPLICATION_CONSTANTS from '../constants';
-
 
 const LeaveApplicationUpdateDrawer: React.FC = () => {
   const { [LEAVEAPPLICATION_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const LeaveApplicationUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.leaveApplicationId),
   });
 
-
   const updateLeaveApplicationMutation = useMutation({
     mutationFn: updateLeaveApplication,
   });
 
   const isLoading = isLoadingLeaveApplication || updateLeaveApplicationMutation.isPending;
   const form = useForm<z.infer<typeof updateLeaveApplicationPayloadValidator>>({
-  resolver: zodResolver(updateLeaveApplicationPayloadValidator),
-  defaultValues: getDefaultFormValues(updateLeaveApplicationPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateLeaveApplicationPayloadValidator),
+    defaultValues: getDefaultFormValues(updateLeaveApplicationPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (leaveApplicationResponse?.data) {
@@ -46,29 +44,37 @@ const LeaveApplicationUpdateDrawer: React.FC = () => {
   }, [leaveApplicationResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateLeaveApplicationPayloadValidator>) => {
-    try {
-      await updateLeaveApplicationMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [LEAVEAPPLICATION_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateLeaveApplicationMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateLeaveApplicationPayloadValidator>) => {
+      try {
+        await updateLeaveApplicationMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [LEAVEAPPLICATION_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateLeaveApplicationMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateLeaveApplicationPayloadValidator));
-  dispatch(resetSelectedObj(LEAVEAPPLICATION_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateLeaveApplicationPayloadValidator));
+    dispatch(resetSelectedObj(LEAVEAPPLICATION_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${LEAVEAPPLICATION_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <LeaveApplicationUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${LEAVEAPPLICATION_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <LeaveApplicationUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

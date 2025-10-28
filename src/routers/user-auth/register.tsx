@@ -1,17 +1,22 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Spinner } from '@/components/ui/spinner';
 import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { setSession } from '@/store/slice/sessionSlice';
-import { userRegister } from './service';
-import { useMutation } from '@tanstack/react-query';
-import { CleanError, getFieldErrorFromAxios } from '@/util/CleanError';
-import defaultObj from './data/index';
+import { CleanError } from '@/util/CleanError';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerUserPayloadValidator } from './validation';
+import { useMutation } from '@tanstack/react-query';
+import React, { useCallback, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+
+import { userRegister } from './service';
+import { registerUserPayloadValidator } from './validation';
+
+import { toast } from 'sonner';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 
 type RegistrationFormData = z.infer<typeof registerUserPayloadValidator>;
 
@@ -21,32 +26,14 @@ const UserRegisterPage: React.FC = () => {
   const { isLoggedIn } = session;
   const userRegisterMutation = useMutation({ mutationFn: userRegister });
 
-  const isLoading = userRegisterMutation.isPending;
-  const error = userRegisterMutation.error;
-
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
-  const fieldErrors = useMemo(
-    () => ({
-    email: getFieldErrorFromAxios(error, 'email') || '',
-    username: getFieldErrorFromAxios(error, 'username') || '',
-    password: getFieldErrorFromAxios(error, 'password') || ''
-    }),
-    [error],
-  );
-
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registerUserPayloadValidator),
-    defaultValues: defaultObj as RegistrationFormData,
-    mode: 'onChange',
+    defaultValues: getDefaultFormValues(registerUserPayloadValidator),
   });
-
-  const formErrors = form.formState.errors;
-  const hasZodEmailError = !!formErrors.email;
-  const hasZodUsernameError = !!formErrors.username;
-  const hasZodPasswordError = !!formErrors.password;
 
   const handleFinish = useCallback(
     async (values: RegistrationFormData) => {
@@ -64,24 +51,13 @@ const UserRegisterPage: React.FC = () => {
           );
           navigate(from, { replace: true });
         }
-      } catch (err) {
-        console.error('Registration error:', err);
+      } catch (error) {
+        toast.error(CleanError(error));
+        handleApiFormErrors(error, form);
       }
     },
     [userRegisterMutation, dispatch, session, navigate, from],
   );
-
-  useEffect(() => {
-    if (hasZodEmailError) {
-      fieldErrors.email = '';
-    }
-    if (hasZodUsernameError) {
-      fieldErrors.username = '';
-    }
-    if (hasZodPasswordError) {
-      fieldErrors.password = '';
-    }
-  }, [hasZodEmailError, hasZodUsernameError, hasZodPasswordError, userRegisterMutation]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -89,87 +65,66 @@ const UserRegisterPage: React.FC = () => {
     }
   }, [isLoggedIn, navigate, from]);
 
-  const ErrorMessage: React.FC<{ message: string }> = React.memo(({ message }) => <p className="text-sm font-medium text-destructive mt-1">{message}</p>);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center py-12 px-5">
+      <Card className="w-full max-w-sm">
         <CardHeader className="flex flex-col gap-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center">Join thousands of developers building amazing applications</CardDescription>
+          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
+          <CardDescription className="">Join thousands of developers building amazing applications</CardDescription>
         </CardHeader>
         <CardContent>
-          {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">{CleanError(error)}</div>}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFinish)} className="flex flex-col gap-4">
-			<FormField
-			                    control={form.control}
-			                    name="email"
-			                    render={({ field: fieldProps }) => (
-			                        <FormItem>
-			                            <FormLabel>Email</FormLabel>
-			                            <FormControl>
-			                                <Input 
-			                                    type="email"
-			                                    placeholder="Enter Email"
-			                                    {...fieldProps}
-                                    
-			                                    value={fieldProps.value?.toString() || ''}
-			                                />
-			                            </FormControl>
-                            
-			                            <FormMessage />
-			                        </FormItem>
-			                    )}
-			                />
-			<FormField
-			                    control={form.control}
-			                    name="username"
-			                    render={({ field: fieldProps }) => (
-			                        <FormItem>
-			                            <FormLabel>Username</FormLabel>
-			                            <FormControl>
-			                                <Input 
-			                                    type="text"
-			                                    placeholder="Enter Username"
-			                                    {...fieldProps}
-                                    
-			                                    value={fieldProps.value?.toString() || ''}
-			                                />
-			                            </FormControl>
-                            
-			                            <FormMessage />
-			                        </FormItem>
-			                    )}
-			                />
-			<FormField
-			                    control={form.control}
-			                    name="password"
-			                    render={({ field: fieldProps }) => (
-			                        <FormItem>
-			                            <FormLabel>Password</FormLabel>
-			                            <FormControl>
-			                                <Input 
-			                                    type="password"
-			                                    placeholder="Enter Password"
-			                                    {...fieldProps}
-                                    
-			                                    value={fieldProps.value?.toString() || ''}
-			                                />
-			                            </FormControl>
-                            
-			                            <FormMessage />
-			                        </FormItem>
-			                    )}
-			                />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Creating' : 'Register'}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field: fieldProps }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="Enter Email" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field: fieldProps }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Enter Username" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field: fieldProps }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Enter Password" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={userRegisterMutation.isPending}>
+                {userRegisterMutation.isPending && <Spinner />}
+                Register
               </Button>
 
-              <div className="text-center">
-                <Button type="button" variant="link" asChild className="text-sm">
-                  <Link to="/userLogin">Already have an account? Sign in</Link>
-                </Button>
+              <div className="text-center text-sm text-muted-foreground">
+                Already have an account?{' '}
+                <Link to="/userLogin" className="text-primary hover:underline">
+                  Login
+                </Link>
               </div>
             </form>
           </Form>

@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import JOBOPENING_CONSTANTS from '../constants';
-
 
 const JobOpeningUpdateDrawer: React.FC = () => {
   const { [JOBOPENING_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const JobOpeningUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.jobOpeningId),
   });
 
-
   const updateJobOpeningMutation = useMutation({
     mutationFn: updateJobOpening,
   });
 
   const isLoading = isLoadingJobOpening || updateJobOpeningMutation.isPending;
   const form = useForm<z.infer<typeof updateJobOpeningPayloadValidator>>({
-  resolver: zodResolver(updateJobOpeningPayloadValidator),
-  defaultValues: getDefaultFormValues(updateJobOpeningPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateJobOpeningPayloadValidator),
+    defaultValues: getDefaultFormValues(updateJobOpeningPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (jobOpeningResponse?.data) {
@@ -46,29 +44,37 @@ const JobOpeningUpdateDrawer: React.FC = () => {
   }, [jobOpeningResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateJobOpeningPayloadValidator>) => {
-    try {
-      await updateJobOpeningMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [JOBOPENING_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateJobOpeningMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateJobOpeningPayloadValidator>) => {
+      try {
+        await updateJobOpeningMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [JOBOPENING_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateJobOpeningMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateJobOpeningPayloadValidator));
-  dispatch(resetSelectedObj(JOBOPENING_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateJobOpeningPayloadValidator));
+    dispatch(resetSelectedObj(JOBOPENING_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${JOBOPENING_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <JobOpeningUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${JOBOPENING_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <JobOpeningUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

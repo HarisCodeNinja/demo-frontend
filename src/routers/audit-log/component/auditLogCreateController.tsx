@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addAuditLog } from '../service';
-	import { createAuditLogPayloadValidator } from '../validation';
-	import { IAuditLogAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import AUDITLOG_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import AuditLogForm from '../form/auditLogCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addAuditLog } from '../service';
+import { createAuditLogPayloadValidator } from '../validation';
+import { IAuditLogAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import AUDITLOG_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import AuditLogForm from '../form/auditLogCreate';
 
 type CreateAuditLogFormData = z.infer<typeof createAuditLogPayloadValidator>;
 
@@ -66,12 +66,20 @@ const AuditLogCreateDrawer: React.FC = () => {
   }, [addAuditLogMutation]);
 
   return (
-  <Controls title={`Create ${AUDITLOG_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addAuditLogMutation.isPending}>
-    <FormProvider {...form}>
-      <AuditLogForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${AUDITLOG_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addAuditLogMutation.isPending}>
+      <FormProvider {...form}>
+        <AuditLogForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default AuditLogCreateDrawer;

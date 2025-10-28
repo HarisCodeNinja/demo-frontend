@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import LEAVETYPE_CONSTANTS from '../constants';
-
 
 const LeaveTypeUpdateDrawer: React.FC = () => {
   const { [LEAVETYPE_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const LeaveTypeUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.leaveTypeId),
   });
 
-
   const updateLeaveTypeMutation = useMutation({
     mutationFn: updateLeaveType,
   });
 
   const isLoading = isLoadingLeaveType || updateLeaveTypeMutation.isPending;
   const form = useForm<z.infer<typeof updateLeaveTypePayloadValidator>>({
-  resolver: zodResolver(updateLeaveTypePayloadValidator),
-  defaultValues: getDefaultFormValues(updateLeaveTypePayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateLeaveTypePayloadValidator),
+    defaultValues: getDefaultFormValues(updateLeaveTypePayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (leaveTypeResponse?.data) {
@@ -46,29 +44,37 @@ const LeaveTypeUpdateDrawer: React.FC = () => {
   }, [leaveTypeResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateLeaveTypePayloadValidator>) => {
-    try {
-      await updateLeaveTypeMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [LEAVETYPE_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateLeaveTypeMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateLeaveTypePayloadValidator>) => {
+      try {
+        await updateLeaveTypeMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [LEAVETYPE_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateLeaveTypeMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateLeaveTypePayloadValidator));
-  dispatch(resetSelectedObj(LEAVETYPE_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateLeaveTypePayloadValidator));
+    dispatch(resetSelectedObj(LEAVETYPE_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${LEAVETYPE_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <LeaveTypeUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${LEAVETYPE_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <LeaveTypeUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

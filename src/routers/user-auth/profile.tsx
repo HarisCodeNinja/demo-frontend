@@ -28,8 +28,7 @@ const UserProfilePage: React.FC = () => {
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: ({ profileData, userId }: { profileData: ProfileFormData; userId: string }) => 
-      updateUserProfile(profileData, userId),
+    mutationFn: ({ profileData, userId }: { profileData: ProfileFormData; userId: string }) => updateUserProfile(profileData, userId),
     onSuccess: () => {
       setIsEditing(false);
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
@@ -45,54 +44,17 @@ const UserProfilePage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const fieldErrors = useMemo(
-    () => ({
-    email: getFieldErrorFromAxios(error, 'email') || '',
-    username: getFieldErrorFromAxios(error, 'username') || '',
-    password: getFieldErrorFromAxios(error, 'password') || '',
-    role: getFieldErrorFromAxios(error, 'role') || ''
-    }),
-    [error],
-  );
-
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileUserPayloadValidator),
     defaultValues: profileData?.data || {},
     mode: 'onChange',
   });
 
-  const formErrors = form.formState.errors;
-  const hasZodEmailError = !!formErrors.email;
-  const hasZodUsernameError = !!formErrors.username;
-  const hasZodPasswordError = !!formErrors.password;
-  const hasZodRoleError = !!formErrors.role;
-
   useEffect(() => {
     if (profileData && !isEditing) {
       form.reset(profileData?.data);
     }
   }, [profileData, isEditing, form]);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/userLogin');
-    }
-  }, [isLoggedIn, navigate]);
-
-  useEffect(() => {
-    if (hasZodEmailError) {
-      fieldErrors.email = '';
-    }
-    if (hasZodUsernameError) {
-      fieldErrors.username = '';
-    }
-    if (hasZodPasswordError) {
-      fieldErrors.password = '';
-    }
-    if (hasZodRoleError) {
-      fieldErrors.role = '';
-    }
-  }, [hasZodEmailError, hasZodUsernameError, hasZodPasswordError, hasZodRoleError, updateProfileMutation]);
 
   const handleFinish = async (values: ProfileFormData) => {
     try {
@@ -124,8 +86,6 @@ const UserProfilePage: React.FC = () => {
       form.reset(profileData.data);
     }
   };
-
-  const ErrorMessage: React.FC<{ message: string }> = React.memo(({ message }) => <p className="text-sm font-medium text-destructive mt-1">{message}</p>);
 
   if (isProfileLoading) {
     return (
@@ -159,101 +119,82 @@ const UserProfilePage: React.FC = () => {
                 <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className={!isEditing || !true ? 'pointer-events-none' : ''}>
-<FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field: fieldProps }) => (
+                          <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="email"
-                                    placeholder="Enter Email"
-                                    {...fieldProps}
-                                    
-                                    value={fieldProps.value?.toString() || ''}
-                                />
+                              <Input type="email" placeholder="Enter Email" {...fieldProps} value={fieldProps.value?.toString() || ''} />
                             </FormControl>
-                            
+
                             <FormMessage />
-                        </FormItem>
-                    )}
-                />
-</div>
-<div className={!isEditing || !true ? 'pointer-events-none' : ''}>
-<FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={!isEditing || !true ? 'pointer-events-none' : ''}>
+                      <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field: fieldProps }) => (
+                          <FormItem>
                             <FormLabel>Username</FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="text"
-                                    placeholder="Enter Username"
-                                    {...fieldProps}
-                                    
-                                    value={fieldProps.value?.toString() || ''}
-                                />
+                              <Input type="text" placeholder="Enter Username" {...fieldProps} value={fieldProps.value?.toString() || ''} />
                             </FormControl>
-                            
+
                             <FormMessage />
-                        </FormItem>
-                    )}
-                />
-</div>
-<div className={!isEditing || !true ? 'pointer-events-none' : ''}>
-<FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={!isEditing || !true ? 'pointer-events-none' : ''}>
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field: fieldProps }) => (
+                          <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    {...fieldProps}
-                                    
-                                    value={fieldProps.value?.toString() || ''}
-                                />
+                              <Input type="password" placeholder="Enter Password" {...fieldProps} value={fieldProps.value?.toString() || ''} />
                             </FormControl>
-                            
+
                             <FormMessage />
-                        </FormItem>
-                    )}
-                />
-</div>
-<div className={!isEditing || !true ? 'pointer-events-none' : ''}>
-<FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field: fieldProps }) => (
-                        <FormItem>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className={!isEditing || !true ? 'pointer-events-none' : ''}>
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field: fieldProps }) => (
+                          <FormItem>
                             <FormLabel>Role</FormLabel>
                             <FormControl>
-                                <Select onValueChange={fieldProps.onChange} value={fieldProps.value || ''}>
+                              <Select onValueChange={fieldProps.onChange} value={fieldProps.value || ''}>
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Role" />
+                                  <SelectValue placeholder="Select Role" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {["admin", "hr", "manager", "employee"].map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {option}
-                                            </SelectItem>
-                                        ))}
+                                  {['admin', 'hr', 'manager', 'employee'].map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                  ))}
                                 </SelectContent>
-                            </Select>
+                              </Select>
                             </FormControl>
-                            
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-</div>
 
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
-                  
+
                   <div className="flex gap-4 pt-4">
                     {!isEditing ? (
                       <Button type="button" onClick={handleEdit} className="flex items-center gap-2" variant="outline">
@@ -262,22 +203,15 @@ const UserProfilePage: React.FC = () => {
                       </Button>
                     ) : (
                       <>
-                        <Button 
-                          type="button"  // Not type="submit"
+                        <Button
+                          type="button" // Not type="submit"
                           onClick={() => form.handleSubmit(handleFinish)()}
-                          className="flex items-center gap-2" 
-                          disabled={updateProfileMutation.isPending || !form.formState.isValid}
-                        >
+                          className="flex items-center gap-2"
+                          disabled={updateProfileMutation.isPending || !form.formState.isValid}>
                           <Save className="h-4 w-4" />
                           {updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
                         </Button>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={handleCancel} 
-                          className="flex items-center gap-2"
-                          disabled={updateProfileMutation.isPending}
-                        >
+                        <Button type="button" variant="outline" onClick={handleCancel} className="flex items-center gap-2" disabled={updateProfileMutation.isPending}>
                           <X className="h-4 w-4" />
                           Cancel
                         </Button>
@@ -300,22 +234,18 @@ const UserProfilePage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="p-4 border rounded-lg bg-gray-50">
-                 <div className="space-y-3">
-                   <div>
-                     <h3 className="font-medium text-gray-900">Change Password</h3>
-                     <p className="text-sm text-gray-600 mt-1">Update your password</p>
-                   </div>
-                   <Button 
-                     variant="outline" 
-                     onClick={() => navigate('/userChangePassword')}
-                     className="hover:bg-gray-100"
-                   >
-                     Change Password
-                   </Button>
-                 </div>
-               </div>
-             </CardContent>
+              <div className="p-4 border rounded-lg bg-gray-50">
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-medium text-gray-900">Change Password</h3>
+                    <p className="text-sm text-gray-600 mt-1">Update your password</p>
+                  </div>
+                  <Button variant="outline" onClick={() => navigate('/userChangePassword')} className="hover:bg-gray-100">
+                    Change Password
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </div>
       </div>

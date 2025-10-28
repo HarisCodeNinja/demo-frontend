@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import SALARYSTRUCTURE_CONSTANTS from '../constants';
-
 
 const SalaryStructureUpdateDrawer: React.FC = () => {
   const { [SALARYSTRUCTURE_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const SalaryStructureUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.salaryStructureId),
   });
 
-
   const updateSalaryStructureMutation = useMutation({
     mutationFn: updateSalaryStructure,
   });
 
   const isLoading = isLoadingSalaryStructure || updateSalaryStructureMutation.isPending;
   const form = useForm<z.infer<typeof updateSalaryStructurePayloadValidator>>({
-  resolver: zodResolver(updateSalaryStructurePayloadValidator),
-  defaultValues: getDefaultFormValues(updateSalaryStructurePayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateSalaryStructurePayloadValidator),
+    defaultValues: getDefaultFormValues(updateSalaryStructurePayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (salaryStructureResponse?.data) {
@@ -46,29 +44,37 @@ const SalaryStructureUpdateDrawer: React.FC = () => {
   }, [salaryStructureResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateSalaryStructurePayloadValidator>) => {
-    try {
-      await updateSalaryStructureMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [SALARYSTRUCTURE_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateSalaryStructureMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateSalaryStructurePayloadValidator>) => {
+      try {
+        await updateSalaryStructureMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [SALARYSTRUCTURE_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateSalaryStructureMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateSalaryStructurePayloadValidator));
-  dispatch(resetSelectedObj(SALARYSTRUCTURE_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateSalaryStructurePayloadValidator));
+    dispatch(resetSelectedObj(SALARYSTRUCTURE_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${SALARYSTRUCTURE_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <SalaryStructureUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${SALARYSTRUCTURE_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <SalaryStructureUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

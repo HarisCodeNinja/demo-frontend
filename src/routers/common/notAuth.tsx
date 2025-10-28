@@ -10,11 +10,11 @@ const NotAuthPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md text-center">
-        <CardHeader className="flex flex-col gap-4">
+        <CardHeader className="flex flex-col gap-4 items-center">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-600">
             <Lock className="h-10 w-10" />
           </div>
-          <CardTitle className="text-2xl font-bold">Access Denied</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Access Denied</CardTitle>
           <CardDescription className="text-lg">You don't have permission to access this page. Please log in with the appropriate credentials.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">

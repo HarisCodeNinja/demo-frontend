@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addDocument } from '../service';
-	import { createDocumentPayloadValidator } from '../validation';
-	import { IDocumentAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import DOCUMENT_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import DocumentForm from '../form/documentCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addDocument } from '../service';
+import { createDocumentPayloadValidator } from '../validation';
+import { IDocumentAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import DOCUMENT_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import DocumentForm from '../form/documentCreate';
 
 type CreateDocumentFormData = z.infer<typeof createDocumentPayloadValidator>;
 
@@ -66,12 +66,20 @@ const DocumentCreateDrawer: React.FC = () => {
   }, [addDocumentMutation]);
 
   return (
-  <Controls title={`Create ${DOCUMENT_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addDocumentMutation.isPending}>
-    <FormProvider {...form}>
-      <DocumentForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${DOCUMENT_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addDocumentMutation.isPending}>
+      <FormProvider {...form}>
+        <DocumentForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default DocumentCreateDrawer;

@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addJobLevel } from '../service';
-	import { createJobLevelPayloadValidator } from '../validation';
-	import { IJobLevelAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import JOBLEVEL_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import JobLevelForm from '../form/jobLevelCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addJobLevel } from '../service';
+import { createJobLevelPayloadValidator } from '../validation';
+import { IJobLevelAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import JOBLEVEL_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import JobLevelForm from '../form/jobLevelCreate';
 
 type CreateJobLevelFormData = z.infer<typeof createJobLevelPayloadValidator>;
 
@@ -66,12 +66,20 @@ const JobLevelCreateDrawer: React.FC = () => {
   }, [addJobLevelMutation]);
 
   return (
-  <Controls title={`Create ${JOBLEVEL_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addJobLevelMutation.isPending}>
-    <FormProvider {...form}>
-      <JobLevelForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${JOBLEVEL_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addJobLevelMutation.isPending}>
+      <FormProvider {...form}>
+        <JobLevelForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default JobLevelCreateDrawer;

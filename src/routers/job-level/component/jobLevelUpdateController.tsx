@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import JOBLEVEL_CONSTANTS from '../constants';
-
 
 const JobLevelUpdateDrawer: React.FC = () => {
   const { [JOBLEVEL_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const JobLevelUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.jobLevelId),
   });
 
-
   const updateJobLevelMutation = useMutation({
     mutationFn: updateJobLevel,
   });
 
   const isLoading = isLoadingJobLevel || updateJobLevelMutation.isPending;
   const form = useForm<z.infer<typeof updateJobLevelPayloadValidator>>({
-  resolver: zodResolver(updateJobLevelPayloadValidator),
-  defaultValues: getDefaultFormValues(updateJobLevelPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateJobLevelPayloadValidator),
+    defaultValues: getDefaultFormValues(updateJobLevelPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (jobLevelResponse?.data) {
@@ -46,29 +44,37 @@ const JobLevelUpdateDrawer: React.FC = () => {
   }, [jobLevelResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateJobLevelPayloadValidator>) => {
-    try {
-      await updateJobLevelMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [JOBLEVEL_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateJobLevelMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateJobLevelPayloadValidator>) => {
+      try {
+        await updateJobLevelMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [JOBLEVEL_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateJobLevelMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateJobLevelPayloadValidator));
-  dispatch(resetSelectedObj(JOBLEVEL_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateJobLevelPayloadValidator));
+    dispatch(resetSelectedObj(JOBLEVEL_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${JOBLEVEL_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <JobLevelUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${JOBLEVEL_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <JobLevelUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

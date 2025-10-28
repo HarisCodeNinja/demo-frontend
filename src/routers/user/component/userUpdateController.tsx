@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import USER_CONSTANTS from '../constants';
-
 
 const UserUpdateDrawer: React.FC = () => {
   const { [USER_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const UserUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.userId),
   });
 
-
   const updateUserMutation = useMutation({
     mutationFn: updateUser,
   });
 
   const isLoading = isLoadingUser || updateUserMutation.isPending;
   const form = useForm<z.infer<typeof updateUserPayloadValidator>>({
-  resolver: zodResolver(updateUserPayloadValidator),
-  defaultValues: getDefaultFormValues(updateUserPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateUserPayloadValidator),
+    defaultValues: getDefaultFormValues(updateUserPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (userResponse?.data) {
@@ -46,29 +44,37 @@ const UserUpdateDrawer: React.FC = () => {
   }, [userResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateUserPayloadValidator>) => {
-    try {
-      await updateUserMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [USER_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateUserMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateUserPayloadValidator>) => {
+      try {
+        await updateUserMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [USER_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateUserMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateUserPayloadValidator));
-  dispatch(resetSelectedObj(USER_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateUserPayloadValidator));
+    dispatch(resetSelectedObj(USER_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${USER_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={800} loading={isLoading}>
-  <FormProvider {...form}>
-    <UserUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${USER_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={800}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <UserUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 
