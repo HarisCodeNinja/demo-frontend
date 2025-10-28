@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import ATTENDANCE_CONSTANTS from '../constants';
-
 
 const AttendanceUpdateDrawer: React.FC = () => {
   const { [ATTENDANCE_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const AttendanceUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.attendanceId),
   });
 
-
   const updateAttendanceMutation = useMutation({
     mutationFn: updateAttendance,
   });
 
   const isLoading = isLoadingAttendance || updateAttendanceMutation.isPending;
   const form = useForm<z.infer<typeof updateAttendancePayloadValidator>>({
-  resolver: zodResolver(updateAttendancePayloadValidator),
-  defaultValues: getDefaultFormValues(updateAttendancePayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateAttendancePayloadValidator),
+    defaultValues: getDefaultFormValues(updateAttendancePayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (attendanceResponse?.data) {
@@ -46,29 +44,37 @@ const AttendanceUpdateDrawer: React.FC = () => {
   }, [attendanceResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateAttendancePayloadValidator>) => {
-    try {
-      await updateAttendanceMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [ATTENDANCE_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateAttendanceMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateAttendancePayloadValidator>) => {
+      try {
+        await updateAttendanceMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [ATTENDANCE_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateAttendanceMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateAttendancePayloadValidator));
-  dispatch(resetSelectedObj(ATTENDANCE_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateAttendancePayloadValidator));
+    dispatch(resetSelectedObj(ATTENDANCE_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${ATTENDANCE_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <AttendanceUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${ATTENDANCE_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <AttendanceUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

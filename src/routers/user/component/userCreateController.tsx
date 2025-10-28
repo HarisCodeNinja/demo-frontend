@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addUser } from '../service';
-	import { createUserPayloadValidator } from '../validation';
-	import { IUserAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import USER_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import UserForm from '../form/userCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addUser } from '../service';
+import { createUserPayloadValidator } from '../validation';
+import { IUserAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import USER_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import UserForm from '../form/userCreate';
 
 type CreateUserFormData = z.infer<typeof createUserPayloadValidator>;
 
@@ -66,12 +66,20 @@ const UserCreateDrawer: React.FC = () => {
   }, [addUserMutation]);
 
   return (
-  <Controls title={`Create ${USER_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={800} loading={addUserMutation.isPending}>
-    <FormProvider {...form}>
-      <UserForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${USER_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={800}
+      loading={addUserMutation.isPending}>
+      <FormProvider {...form}>
+        <UserForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default UserCreateDrawer;

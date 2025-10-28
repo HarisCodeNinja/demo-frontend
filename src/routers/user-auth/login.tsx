@@ -13,6 +13,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { loginUserPayloadValidator } from './validation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Spinner } from '@/components/ui/spinner';
+import { toast } from 'sonner';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 
 type LoginFormData = z.infer<typeof loginUserPayloadValidator>;
 
@@ -23,38 +26,38 @@ const UserLoginPage: React.FC = () => {
 
   const userLoginMutation = useMutation({ mutationFn: userLogin });
 
-  const isLoading = userLoginMutation.isPending;
-  const error = userLoginMutation.error;
-
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginUserPayloadValidator),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-    mode: 'onChange',
+    defaultValues: getDefaultFormValues(loginUserPayloadValidator),
   });
 
-  const handleFinish = useCallback(async (values: LoginFormData) => {
-    const response = await userLoginMutation.mutateAsync(values);
-    if (response) {
-      const result = response.data;
-      dispatch(
-        setSession({
-          ...session,
-          token: result.token,
-          user: result.user,
-          isLoggedIn: true,
-          refreshToken: result.refreshToken,
-        }),
-      );
-      navigate(from, { replace: true });
-    }
-  }, [userLoginMutation, dispatch, session, navigate, from]);
+  const handleFinish = useCallback(
+    async (values: LoginFormData) => {
+      try {
+        const response = await userLoginMutation.mutateAsync(values);
+        if (response) {
+          const result = response.data;
+          dispatch(
+            setSession({
+              ...session,
+              token: result.token,
+              user: result.user,
+              isLoggedIn: true,
+              refreshToken: result.refreshToken,
+            }),
+          );
+          navigate(from, { replace: true });
+        }
+      } catch (error) {
+        toast.error(CleanError(error));
+      }
+    },
+    [userLoginMutation, dispatch, session, navigate, from],
+  );
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -63,7 +66,7 @@ const UserLoginPage: React.FC = () => {
   }, [isLoggedIn, navigate, from]);
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center py-12 px-5 ">
       <Card className="w-full max-w-sm">
         <CardHeader className="">
           <CardTitle className="text-2xl font-bold">Login to your account</CardTitle>
@@ -72,18 +75,14 @@ const UserLoginPage: React.FC = () => {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFinish)} className="flex flex-col gap-4">
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-800 text-sm">
-                  {CleanError(error)}
-                </div>
-              )}
-
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter Email" {...fieldProps} />
                     </FormControl>
@@ -98,7 +97,9 @@ const UserLoginPage: React.FC = () => {
                 render={({ field: fieldProps }) => (
                   <FormItem>
                     <div className="flex justify-between">
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>
+                        Password <span className="text-destructive">*</span>
+                      </FormLabel>
                       <div className="flex justify-end text-sm">
                         <Link to="/userForgotPassword" className="text-primary hover:underline">
                           Forgot password?
@@ -113,8 +114,9 @@ const UserLoginPage: React.FC = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Signing In...' : 'Sign In'}
+              <Button type="submit" className="w-full" disabled={userLoginMutation.isPending}>
+                {userLoginMutation.isPending && <Spinner />}
+                Login
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">

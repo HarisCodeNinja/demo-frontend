@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addDepartment } from '../service';
-	import { createDepartmentPayloadValidator } from '../validation';
-	import { IDepartmentAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import DEPARTMENT_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import DepartmentForm from '../form/departmentCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addDepartment } from '../service';
+import { createDepartmentPayloadValidator } from '../validation';
+import { IDepartmentAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import DEPARTMENT_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import DepartmentForm from '../form/departmentCreate';
 
 type CreateDepartmentFormData = z.infer<typeof createDepartmentPayloadValidator>;
 
@@ -66,12 +66,20 @@ const DepartmentCreateDrawer: React.FC = () => {
   }, [addDepartmentMutation]);
 
   return (
-  <Controls title={`Create ${DEPARTMENT_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addDepartmentMutation.isPending}>
-    <FormProvider {...form}>
-      <DepartmentForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${DEPARTMENT_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addDepartmentMutation.isPending}>
+      <FormProvider {...form}>
+        <DepartmentForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default DepartmentCreateDrawer;

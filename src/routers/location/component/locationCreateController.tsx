@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addLocation } from '../service';
-	import { createLocationPayloadValidator } from '../validation';
-	import { ILocationAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import LOCATION_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import LocationForm from '../form/locationCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addLocation } from '../service';
+import { createLocationPayloadValidator } from '../validation';
+import { ILocationAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import LOCATION_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import LocationForm from '../form/locationCreate';
 
 type CreateLocationFormData = z.infer<typeof createLocationPayloadValidator>;
 
@@ -66,12 +66,20 @@ const LocationCreateDrawer: React.FC = () => {
   }, [addLocationMutation]);
 
   return (
-  <Controls title={`Create ${LOCATION_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addLocationMutation.isPending}>
-    <FormProvider {...form}>
-      <LocationForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${LOCATION_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addLocationMutation.isPending}>
+      <FormProvider {...form}>
+        <LocationForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default LocationCreateDrawer;

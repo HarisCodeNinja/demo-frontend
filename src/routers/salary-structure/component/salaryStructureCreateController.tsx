@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addSalaryStructure } from '../service';
-	import { createSalaryStructurePayloadValidator } from '../validation';
-	import { ISalaryStructureAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import SALARYSTRUCTURE_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import SalaryStructureForm from '../form/salaryStructureCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addSalaryStructure } from '../service';
+import { createSalaryStructurePayloadValidator } from '../validation';
+import { ISalaryStructureAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import SALARYSTRUCTURE_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import SalaryStructureForm from '../form/salaryStructureCreate';
 
 type CreateSalaryStructureFormData = z.infer<typeof createSalaryStructurePayloadValidator>;
 
@@ -66,12 +66,20 @@ const SalaryStructureCreateDrawer: React.FC = () => {
   }, [addSalaryStructureMutation]);
 
   return (
-  <Controls title={`Create ${SALARYSTRUCTURE_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addSalaryStructureMutation.isPending}>
-    <FormProvider {...form}>
-      <SalaryStructureForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${SALARYSTRUCTURE_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addSalaryStructureMutation.isPending}>
+      <FormProvider {...form}>
+        <SalaryStructureForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default SalaryStructureCreateDrawer;

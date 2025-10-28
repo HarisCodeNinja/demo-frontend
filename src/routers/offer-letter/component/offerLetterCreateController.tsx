@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addOfferLetter } from '../service';
-	import { createOfferLetterPayloadValidator } from '../validation';
-	import { IOfferLetterAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import OFFERLETTER_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import OfferLetterForm from '../form/offerLetterCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addOfferLetter } from '../service';
+import { createOfferLetterPayloadValidator } from '../validation';
+import { IOfferLetterAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import OFFERLETTER_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import OfferLetterForm from '../form/offerLetterCreate';
 
 type CreateOfferLetterFormData = z.infer<typeof createOfferLetterPayloadValidator>;
 
@@ -66,12 +66,20 @@ const OfferLetterCreateDrawer: React.FC = () => {
   }, [addOfferLetterMutation]);
 
   return (
-  <Controls title={`Create ${OFFERLETTER_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addOfferLetterMutation.isPending}>
-    <FormProvider {...form}>
-      <OfferLetterForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${OFFERLETTER_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addOfferLetterMutation.isPending}>
+      <FormProvider {...form}>
+        <OfferLetterForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default OfferLetterCreateDrawer;

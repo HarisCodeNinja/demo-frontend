@@ -11,10 +11,9 @@ import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
 import { FormProvider } from 'react-hook-form';
-import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import GOAL_CONSTANTS from '../constants';
-
 
 const GoalUpdateDrawer: React.FC = () => {
   const { [GOAL_CONSTANTS.ENTITY_KEY]: { showEdit, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
@@ -27,17 +26,16 @@ const GoalUpdateDrawer: React.FC = () => {
     enabled: Boolean(showEdit && primaryKeys?.goalId),
   });
 
-
   const updateGoalMutation = useMutation({
     mutationFn: updateGoal,
   });
 
   const isLoading = isLoadingGoal || updateGoalMutation.isPending;
   const form = useForm<z.infer<typeof updateGoalPayloadValidator>>({
-  resolver: zodResolver(updateGoalPayloadValidator),
-  defaultValues: getDefaultFormValues(updateGoalPayloadValidator),
-  mode: 'onChange',
-});
+    resolver: zodResolver(updateGoalPayloadValidator),
+    defaultValues: getDefaultFormValues(updateGoalPayloadValidator),
+    mode: 'onChange',
+  });
 
   useEffect(() => {
     if (goalResponse?.data) {
@@ -46,29 +44,37 @@ const GoalUpdateDrawer: React.FC = () => {
   }, [goalResponse, form]);
 
   const updateData = React.useCallback(
-  async (data: z.infer<typeof updateGoalPayloadValidator>) => {
-    try {
-      await updateGoalMutation.mutateAsync({ ...data, ...primaryKeys });
-      queryClient.invalidateQueries({ queryKey: [GOAL_CONSTANTS.QUERY_KEY], exact: false });
-      handleCloseDrawer();
-    } catch (error) {
-      handleApiFormErrors(error, form);
-    }
-  },
-  [updateGoalMutation, primaryKeys, queryClient, form],
-);
+    async (data: z.infer<typeof updateGoalPayloadValidator>) => {
+      try {
+        await updateGoalMutation.mutateAsync({ ...data, ...primaryKeys });
+        queryClient.invalidateQueries({ queryKey: [GOAL_CONSTANTS.QUERY_KEY], exact: false });
+        handleCloseDrawer();
+      } catch (error) {
+        handleApiFormErrors(error, form);
+      }
+    },
+    [updateGoalMutation, primaryKeys, queryClient, form],
+  );
 
   const handleCloseDrawer = React.useCallback(() => {
-  form.reset(getDefaultFormValues(updateGoalPayloadValidator));
-  dispatch(resetSelectedObj(GOAL_CONSTANTS.ENTITY_KEY));
-}, [form, dispatch]);
+    form.reset(getDefaultFormValues(updateGoalPayloadValidator));
+    dispatch(resetSelectedObj(GOAL_CONSTANTS.ENTITY_KEY));
+  }, [form, dispatch]);
 
   return (
-    <Controls title={`Edit ${GOAL_CONSTANTS.ENTITY_NAME}`} open={showEdit} onClose={handleCloseDrawer} form={form} onSubmit={updateData} type="drawer" width={600} loading={isLoading}>
-  <FormProvider {...form}>
-    <GoalUpdateForm />
-  </FormProvider>
-</Controls>
+    <Controls
+      title={`Edit ${GOAL_CONSTANTS.ENTITY_NAME}`}
+      open={showEdit}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={updateData}
+      type="drawer"
+      width={600}
+      loading={isLoading}>
+      <FormProvider {...form}>
+        <GoalUpdateForm />
+      </FormProvider>
+    </Controls>
   );
 };
 

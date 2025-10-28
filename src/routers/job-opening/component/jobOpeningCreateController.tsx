@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addJobOpening } from '../service';
-	import { createJobOpeningPayloadValidator } from '../validation';
-	import { IJobOpeningAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import JOBOPENING_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import JobOpeningForm from '../form/jobOpeningCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addJobOpening } from '../service';
+import { createJobOpeningPayloadValidator } from '../validation';
+import { IJobOpeningAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import JOBOPENING_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import JobOpeningForm from '../form/jobOpeningCreate';
 
 type CreateJobOpeningFormData = z.infer<typeof createJobOpeningPayloadValidator>;
 
@@ -66,12 +66,20 @@ const JobOpeningCreateDrawer: React.FC = () => {
   }, [addJobOpeningMutation]);
 
   return (
-  <Controls title={`Create ${JOBOPENING_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addJobOpeningMutation.isPending}>
-    <FormProvider {...form}>
-      <JobOpeningForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${JOBOPENING_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addJobOpeningMutation.isPending}>
+      <FormProvider {...form}>
+        <JobOpeningForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default JobOpeningCreateDrawer;

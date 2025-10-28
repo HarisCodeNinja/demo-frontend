@@ -1,20 +1,20 @@
 import React from 'react';
-	import { FormProvider, useForm } from 'react-hook-form';
-	import { zodResolver } from '@hookform/resolvers/zod';
-	import { z } from 'zod';
-	import { useMutation, useQueryClient } from '@tanstack/react-query';
-	
-	import { addInterview } from '../service';
-	import { createInterviewPayloadValidator } from '../validation';
-	import { IInterviewAdd } from '../interface';
-	import { RootState, useAppDispatch, useAppSelector } from '@/store';
-	import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
-	import { getDefaultFormValues } from '@/util/getFormDefaultFormValues';
-	import { handleApiFormErrors } from '@/util/handleApiFormErrors';
-	import INTERVIEW_CONSTANTS from '../constants';
-	
-	import Controls from '@/components/Wrapper/controls';
-	import InterviewForm from '../form/interviewCreate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { addInterview } from '../service';
+import { createInterviewPayloadValidator } from '../validation';
+import { IInterviewAdd } from '../interface';
+import { RootState, useAppDispatch, useAppSelector } from '@/store';
+import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
+import { handleApiFormErrors } from '@/util/handleApiFormErrors';
+import INTERVIEW_CONSTANTS from '../constants';
+
+import Controls from '@/components/Wrapper/controls';
+import InterviewForm from '../form/interviewCreate';
 
 type CreateInterviewFormData = z.infer<typeof createInterviewPayloadValidator>;
 
@@ -66,12 +66,20 @@ const InterviewCreateDrawer: React.FC = () => {
   }, [addInterviewMutation]);
 
   return (
-  <Controls title={`Create ${INTERVIEW_CONSTANTS.ENTITY_NAME}`} open={showForm} onClose={handleCloseDrawer} form={form} onSubmit={handleSubmit} type="drawer" width={600} loading={addInterviewMutation.isPending}>
-    <FormProvider {...form}>
-      <InterviewForm />
-    </FormProvider>
-  </Controls>
-);
+    <Controls
+      title={`Create ${INTERVIEW_CONSTANTS.ENTITY_NAME}`}
+      open={showForm}
+      onClose={handleCloseDrawer}
+      form={form}
+      onSubmit={handleSubmit}
+      type="drawer"
+      width={600}
+      loading={addInterviewMutation.isPending}>
+      <FormProvider {...form}>
+        <InterviewForm />
+      </FormProvider>
+    </Controls>
+  );
 };
 
 export default InterviewCreateDrawer;

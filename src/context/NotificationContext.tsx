@@ -64,7 +64,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({ children })
 
   return (
     <NotificationContext.Provider value={{ showNotification }}>
-      <Toaster richColors position="top-left" />
+      <Toaster richColors position="bottom-right" />
       {children}
     </NotificationContext.Provider>
   );
