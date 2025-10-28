@@ -77,7 +77,9 @@ const UserChangePasswordPage: React.FC = () => {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Current Password</FormLabel>
+                    <FormLabel>
+                      Current Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input type={showPasswords.current ? 'text' : 'password'} placeholder="Enter current password" disabled={changePasswordMutation.isPending} {...field} />
@@ -120,7 +122,9 @@ const UserChangePasswordPage: React.FC = () => {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>
+                      New Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input type={showPasswords.new ? 'text' : 'password'} placeholder="Enter new password" disabled={changePasswordMutation.isPending} {...field} />
@@ -163,7 +167,9 @@ const UserChangePasswordPage: React.FC = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>
+                      Confirm New Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input type={showPasswords.confirm ? 'text' : 'password'} placeholder="Confirm new password" disabled={changePasswordMutation.isPending} {...field} />

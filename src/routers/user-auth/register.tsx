@@ -80,7 +80,9 @@ const UserRegisterPage: React.FC = () => {
                 name="email"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="Enter Email" {...fieldProps} value={fieldProps.value?.toString() || ''} />
                     </FormControl>
@@ -106,7 +108,9 @@ const UserRegisterPage: React.FC = () => {
                 name="password"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>
+                      Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="Enter Password" {...fieldProps} value={fieldProps.value?.toString() || ''} />
                     </FormControl>

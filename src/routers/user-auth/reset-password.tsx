@@ -85,7 +85,9 @@ const UserResetPasswordPage: React.FC = () => {
                 name="newPassword"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel>
+                      New Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <PasswordInput
                         value={fieldProps.value}
@@ -106,7 +108,9 @@ const UserResetPasswordPage: React.FC = () => {
                 name="confirmPassword"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormLabel>
+                      Confirm New Password <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <PasswordInput value={fieldProps.value} onChange={fieldProps.onChange} placeholder="Confirm new password" aria-label="Confirm new password" />
                     </FormControl>

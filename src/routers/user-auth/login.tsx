@@ -80,7 +80,9 @@ const UserLoginPage: React.FC = () => {
                 name="email"
                 render={({ field: fieldProps }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter Email" {...fieldProps} />
                     </FormControl>
@@ -95,7 +97,9 @@ const UserLoginPage: React.FC = () => {
                 render={({ field: fieldProps }) => (
                   <FormItem>
                     <div className="flex justify-between">
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>
+                        Password <span className="text-destructive">*</span>
+                      </FormLabel>
                       <div className="flex justify-end text-sm">
                         <Link to="/userForgotPassword" className="text-primary hover:underline">
                           Forgot password?

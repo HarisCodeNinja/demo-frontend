@@ -90,7 +90,9 @@ const UserForgotPasswordPage: React.FC = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      Email <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="Enter your email" {...field} />
                     </FormControl>
