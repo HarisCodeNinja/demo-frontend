@@ -5,6 +5,7 @@ import { LayoutConfig, User } from '../types';
 import { MenuItem } from '@/interface/common';
 import { useLocation } from 'react-router-dom';
 import { ChevronRight, FileIcon } from 'lucide-react';
+import { RootState, useAppSelector } from '@/store';
 import {
   Sidebar as SidebarComponent,
   SidebarContent,
@@ -117,6 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, user }) => {
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
   const { open } = useSidebar();
+  const { isDarkTheme } = useAppSelector((state: RootState) => state.session);
   const { processedMenus, handleMenuClick } = useSidebarHook({
     menus: config.menus,
     layoutType: config.type,
@@ -163,14 +165,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ config, user }) => {
     setExpandedMenus(newExpanded);
   }, [location.pathname, processedMenus]);
 
+  const logoSrc = React.useMemo(() => {
+    if (config.logoLightPath && config.logoDarkPath) {
+      return isDarkTheme ? config.logoDarkPath : config.logoLightPath;
+    }
+    return config.logoPath;
+  }, [isDarkTheme, config.logoLightPath, config.logoDarkPath, config.logoPath]);
+
   return (
     <SidebarComponent collapsible="icon" variant="sidebar">
       <SidebarHeader className="h-16 justify-center items-center">
         {open ? (
-          <img src={config.logoPath} alt={config.title} className="w-auto h-auto max-w-[200px] max-h-[40px]" />
+          <img src={logoSrc} alt={config.title} className="w-auto h-auto max-w-[200px] max-h-[40px]" />
         ) : (
           <div className="flex aspect-square size-8 items-center justify-center">
-            <img src={config.logoPath} className="size-8 object-contain" alt={config.title} />
+            <img src={logoSrc} className="size-8 object-contain" alt={config.title} />
           </div>
         )}
       </SidebarHeader>

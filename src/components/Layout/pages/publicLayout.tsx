@@ -14,7 +14,11 @@ const PublicLayout: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const { user } = useAppSelector((state: any) => state.session);
+  const { user, isDarkTheme } = useAppSelector((state: any) => state.session);
+
+  const logoSrc = React.useMemo(() => {
+    return isDarkTheme ? '/logoDefaultArea-dark.png' : '/logoDefaultArea-light.png';
+  }, [isDarkTheme]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,7 +48,7 @@ const PublicLayout: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link to={'/'}>
                 <img
-                  src="/logo.png"
+                  src={logoSrc}
                   alt="Logo"
                   className="h-7 object-contain"
                   onError={(e) => {
