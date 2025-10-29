@@ -78,13 +78,13 @@ const UserLoginPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field: fieldProps }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-destructive">*</span>
+                      Email<span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Email" {...fieldProps} />
+                      <Input placeholder="Enter Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,7 +94,7 @@ const UserLoginPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field: fieldProps }) => (
+                render={({ field }) => (
                   <FormItem>
                     <div className="flex justify-between">
                       <FormLabel>
@@ -107,7 +107,7 @@ const UserLoginPage: React.FC = () => {
                       </div>
                     </div>
                     <FormControl>
-                      <Input type="password" placeholder="Enter Password" {...fieldProps} />
+                      <Input type="password" placeholder="Enter Password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

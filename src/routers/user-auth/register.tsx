@@ -1,22 +1,20 @@
-import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Spinner } from '@/components/ui/spinner';
 import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { setSession } from '@/store/slice/sessionSlice';
 import { CleanError } from '@/util/CleanError';
+import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import React, { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { userRegister } from './service';
 import { registerUserPayloadValidator } from './validation';
-
-import { toast } from 'sonner';
-import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 
 type RegistrationFormData = z.infer<typeof registerUserPayloadValidator>;
 
@@ -78,13 +76,13 @@ const UserRegisterPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field: fieldProps }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>
                       Email <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Enter Email" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                      <Input type="email" placeholder="Enter Email" {...field} value={field.value?.toString() || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -93,11 +91,13 @@ const UserRegisterPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field: fieldProps }) => (
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>
+                      Username <span className="text-destructive">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Enter Username" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                      <Input type="text" placeholder="Enter Username" {...field} value={field.value?.toString() || ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,13 +106,13 @@ const UserRegisterPage: React.FC = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field: fieldProps }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>
                       Password <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Enter Password" {...fieldProps} value={fieldProps.value?.toString() || ''} />
+                      <Input type="password" placeholder="Enter Password" {...field} value={field.value?.toString() || ''} />
                     </FormControl>
 
                     <FormMessage />

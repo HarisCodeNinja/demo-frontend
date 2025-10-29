@@ -1,11 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { RootState, useAppSelector } from '@/store';
 import { CleanError } from '@/util/CleanError';
-import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
@@ -13,8 +11,9 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { userChangePassword } from './service';
-import { changePasswordUserPayloadValidator } from './validation';
+import { userChangePassword } from '../../service';
+import { changePasswordUserPayloadValidator } from '../../validation';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 
 type ChangePasswordFormData = z.infer<typeof changePasswordUserPayloadValidator>;
 
@@ -36,7 +35,11 @@ const UserChangePasswordPage: React.FC = () => {
 
   const form = useForm<ChangePasswordFormData>({
     resolver: zodResolver(changePasswordUserPayloadValidator),
-    defaultValues: getDefaultFormValues(changePasswordUserPayloadValidator),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
   });
 
   useEffect(() => {
@@ -63,15 +66,14 @@ const UserChangePasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center py-12 px-5">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="">
-          <CardTitle className="text-2xl font-bold">Change Password</CardTitle>
-          <CardDescription>Enter your current password and choose a new one.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFinish)} className="flex flex-col gap-4">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">Change Password</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFinish)} className="">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
               <FormField
                 control={form.control}
                 name="currentPassword"
@@ -116,6 +118,7 @@ const UserChangePasswordPage: React.FC = () => {
                   </FormItem>
                 )}
               />
+              <div></div>
 
               <FormField
                 control={form.control}
@@ -206,16 +209,17 @@ const UserChangePasswordPage: React.FC = () => {
                   </FormItem>
                 )}
               />
-
-              <Button type="submit" className="w-full" disabled={changePasswordMutation.isPending}>
+            </div>
+            <div className="flex justify-end pt-5">
+              <Button type="submit" className="" disabled={changePasswordMutation.isPending}>
                 {changePasswordMutation.isPending && <Spinner />}
                 Change Password
               </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 };
 
