@@ -1,4 +1,4 @@
-export const formatDate = (isoString: string): string => {
+export const formatDate = (isoString: string | Date): string => {
   const date = new Date(isoString);
 
   const day = date.getUTCDate();

@@ -34,7 +34,7 @@ function MobileCardsView<T>({
   CardComponent,
   emptyStateIcon: EmptyStateIcon,
   loadingCardVariant = 'compact',
-  getRecordKey
+  getRecordKey,
 }: GenericMobileCardsViewProps<T>) {
   if (isLoading) {
     return (
@@ -50,15 +50,7 @@ function MobileCardsView<T>({
     <div className="w-full space-y-3">
       {data.map((record: T, index: number) => {
         const key = getRecordKey ? getRecordKey(record, index) : index;
-        return (
-          <CardComponent
-            key={key}
-            record={record}
-            columns={columns}
-            actions={actions}
-            scope={user.scope}
-          />
-        );
+        return <CardComponent key={key} record={record} columns={columns} actions={actions} scope={user.scope} />;
       })}
 
       {data.length === 0 && (
