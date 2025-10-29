@@ -2,6 +2,8 @@ export interface LayoutConfig {
   type: 'admin' | 'default';
   title: string;
   logoPath?: string;
+  logoLightPath?: string;
+  logoDarkPath?: string;
   showFooter?: boolean;
   showCompactToggle?: boolean;
   showLanguageSwitcher?: boolean;

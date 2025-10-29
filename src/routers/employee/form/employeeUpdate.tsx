@@ -30,7 +30,7 @@ const EmployeeForm: React.FC = () => {
               <FormControl>
                 <Select onValueChange={fieldProps.onChange} value={fieldProps.value?.toString() || ''}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select User Id" />
+                    <SelectValue placeholder="Select User" />
                   </SelectTrigger>
                   <SelectContent>
                     {user?.map((option) => (

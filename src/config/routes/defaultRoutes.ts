@@ -36,11 +36,6 @@ export const defaultRoutes: CustomRoutes[] = [
     component: React.lazy(() => import('@/routers/attendance')),
   },
   {
-    key: 'audit-log',
-    path: '/audit-logs',
-    component: React.lazy(() => import('@/routers/audit-log')),
-  },
-  {
     key: 'candidate',
     path: '/candidates',
     component: React.lazy(() => import('@/routers/candidate')),
