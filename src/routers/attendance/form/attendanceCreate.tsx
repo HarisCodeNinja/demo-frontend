@@ -13,19 +13,29 @@ const AttendanceForm: React.FC = () => {
 
   const { employees: employee } = useEmployeeOptions();
 
+  const status = form.watch('status');
+  const isAbsent = status === 'absent';
+
+  React.useEffect(() => {
+    if (isAbsent) {
+      form.setValue('checkInTime', undefined);
+      form.setValue('checkOutTime', undefined);
+    }
+  }, [isAbsent, form]);
+
   return (
     <Form {...form}>
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 items-start">
         <FormField
           control={form.control}
           name="employeeId"
-          render={({ field: fieldProps }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Employee</FormLabel>
               <FormControl>
-                <Select onValueChange={fieldProps.onChange} value={fieldProps.value?.toString() || ''}>
+                <Select onValueChange={field.onChange} value={field.value?.toString() || ''}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Employee Id" />
+                    <SelectValue placeholder="Select Employee" />
                   </SelectTrigger>
                   <SelectContent>
                     {employee?.map((option) => (
@@ -44,40 +54,12 @@ const AttendanceForm: React.FC = () => {
         <FormField
           control={form.control}
           name="attendanceDate"
-          render={({ field: fieldProps }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Attendance Date</FormLabel>
               <FormControl>
-                <DatePicker value={fieldProps.value} onChange={fieldProps.onChange} placeholder="Select Attendance Date" />
+                <DatePicker value={field.value} onChange={field.onChange} placeholder="Select Attendance Date" />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="checkInTime"
-          render={({ field: fieldProps }) => (
-            <FormItem>
-              <FormLabel>Check In Time</FormLabel>
-              <FormControl>
-                <DateTimePicker value={fieldProps.value} onChange={fieldProps.onChange} placeholder="Select Check In Time" />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="checkOutTime"
-          render={({ field: fieldProps }) => (
-            <FormItem>
-              <FormLabel>Check Out Time</FormLabel>
-              <FormControl>
-                <DateTimePicker value={fieldProps.value} onChange={fieldProps.onChange} placeholder="Select Check Out Time" />
-              </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -85,11 +67,11 @@ const AttendanceForm: React.FC = () => {
         <FormField
           control={form.control}
           name="status"
-          render={({ field: fieldProps }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Status</FormLabel>
               <FormControl>
-                <Select onValueChange={fieldProps.onChange} value={fieldProps.value || ''}>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Status" />
                   </SelectTrigger>
@@ -107,6 +89,40 @@ const AttendanceForm: React.FC = () => {
             </FormItem>
           )}
         />
+        {!isAbsent && (
+          <>
+            <FormField
+              control={form.control}
+              name="checkInTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Check In Time</FormLabel>
+                  <FormControl>
+                    <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Select Check In Time" />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="checkOutTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Check Out Time <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Select Check Out Time (Optional)" />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
         <div className="text-sm text-muted-foreground">
           <span className="text-destructive">*</span> Required fields
         </div>

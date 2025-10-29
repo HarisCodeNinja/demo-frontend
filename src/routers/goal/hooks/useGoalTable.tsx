@@ -11,6 +11,7 @@ import { TableAction, TableColumn } from '@/types/table';
 import { IGoalIndex } from '../interface';
 import goalConstants from '../constants';
 import { formatDate } from '@/util/Time';
+import { JSONValueRenderer } from '@/components/common/JSONValueRenderer';
 
 interface UseGoalTableConfigProps {
   setGoalCount: React.Dispatch<React.SetStateAction<number | null>>;
@@ -208,7 +209,7 @@ export const goalTableColumns: TableColumn<IGoalIndex>[] = [
   { key: 'employee', title: 'Employee', dataIndex: 'firstName', sortable: false },
   { key: 'title', title: 'Title', dataIndex: 'title', sortable: false },
   { key: 'description', title: 'Description', dataIndex: 'description', sortable: false },
-  { key: 'kpi', title: 'Kpi', dataIndex: 'kpi', sortable: false },
+  { key: 'kpi', title: 'Kpi', dataIndex: 'kpi', sortable: false, render: (value) => <JSONValueRenderer value={value} /> },
   { key: 'period', title: 'Period', dataIndex: 'period', sortable: false },
   { key: 'startDate', title: 'Start Date', dataIndex: 'startDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },
   { key: 'endDate', title: 'End Date', dataIndex: 'endDate', sortable: false, render: (value) => (value ? formatDate(value) : '-') },

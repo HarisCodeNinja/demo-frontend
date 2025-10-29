@@ -50,4 +50,3 @@ export const uploadAttendance = async (data: FormData) => {
 export const deleteUploadAttendance = async (data: IAttendancePrimaryKeys & { property: string }) => {
   return await apiClient.delete<void>(`/attendances/upload/${data.attendanceId}`, { data });
 };
-

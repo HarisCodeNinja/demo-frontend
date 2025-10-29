@@ -12,7 +12,6 @@ import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import ATTENDANCE_CONSTANTS from '../constants';
-
 import Controls from '@/components/Wrapper/controls';
 import AttendanceForm from '../form/attendanceCreate';
 
@@ -36,7 +35,15 @@ const AttendanceCreateDrawer: React.FC = () => {
   const handleSubmit = React.useCallback(
     async (data: CreateAttendanceFormData) => {
       try {
-        await addAttendanceMutation.mutateAsync(data as IAttendanceAdd);
+        const transformedData: IAttendanceAdd = {
+          ...data,
+          checkInTime: data.checkInTime || undefined,
+          checkOutTime: data.checkOutTime || undefined,
+        };
+
+        debugger;
+
+        await addAttendanceMutation.mutateAsync(transformedData);
         queryClient.invalidateQueries({ queryKey: [ATTENDANCE_CONSTANTS.QUERY_KEY], exact: false });
         handleCloseDrawer();
       } catch (error) {

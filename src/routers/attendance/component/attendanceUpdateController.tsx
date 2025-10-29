@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { getAttendanceEditDetails, updateAttendance } from '../service';
@@ -10,7 +10,6 @@ import AttendanceUpdateForm from '../form/attendanceUpdate';
 import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
 import Controls from '@/components/Wrapper/controls';
-import { FormProvider } from 'react-hook-form';
 import { getDefaultFormValues } from '@/util/getDefaultFormValues';
 import { handleApiFormErrors } from '@/util/handleApiFormErrors';
 import ATTENDANCE_CONSTANTS from '../constants';
@@ -46,7 +45,15 @@ const AttendanceUpdateDrawer: React.FC = () => {
   const updateData = React.useCallback(
     async (data: z.infer<typeof updateAttendancePayloadValidator>) => {
       try {
-        await updateAttendanceMutation.mutateAsync({ ...data, ...primaryKeys });
+        // Transform data to ensure empty values are null, not undefined or empty strings
+        const transformedData: IAttendanceEdit = {
+          ...data,
+          checkInTime: data.checkInTime || undefined,
+          checkOutTime: data.checkOutTime || undefined,
+          ...primaryKeys,
+        };
+
+        await updateAttendanceMutation.mutateAsync(transformedData);
         queryClient.invalidateQueries({ queryKey: [ATTENDANCE_CONSTANTS.QUERY_KEY], exact: false });
         handleCloseDrawer();
       } catch (error) {
