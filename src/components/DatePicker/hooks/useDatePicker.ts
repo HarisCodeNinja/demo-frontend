@@ -7,10 +7,22 @@ interface UseDatePickerProps {
 
 export const useDatePicker = ({ value, onChange }: UseDatePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState<Date>(() => value || new Date());
+
+  const [currentMonth, setCurrentMonth] = useState<Date>(() => {
+    if (value) {
+      const date = new Date(value);
+      return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    }
+    return new Date();
+  });
 
   const handleDateSelect = (date: Date | undefined) => {
-    onChange?.(date);
+    if (date) {
+      const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0));
+      onChange?.(normalizedDate);
+    } else {
+      onChange?.(undefined);
+    }
     setIsOpen(false);
   };
 
@@ -35,7 +47,7 @@ export const useDatePicker = ({ value, onChange }: UseDatePickerProps) => {
   // Generate year options (current year ± 50 years)
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 101 }, (_, i) => currentYear - 50 + i);
-  
+
   // Generate month options
   const monthOptions = [
     { value: '0', label: 'January' },

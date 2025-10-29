@@ -23,6 +23,17 @@ export const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, label =
     onChange,
   });
 
+  const localDate = React.useMemo(() => {
+    if (!value) return undefined;
+    const date = new Date(value);
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  }, [value]);
+
+  const displayDate = React.useMemo(() => {
+    if (!localDate) return null;
+    return format(localDate, 'PPP');
+  }, [localDate]);
+
   return (
     <div className={cn('space-y-2', className)}>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -30,7 +41,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, label =
           <PopoverTrigger asChild>
             <Button variant="outline" className={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground')} disabled={disabled}>
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {value ? format(value, 'PPP') : placeholder}
+              {displayDate || placeholder}
             </Button>
           </PopoverTrigger>
           {value && !disabled && (
@@ -77,7 +88,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, label =
             </div>
           </div>
 
-          <Calendar mode="single" selected={value} onSelect={handleDateSelect} month={currentMonth} onMonthChange={setCurrentMonth} initialFocus />
+          <Calendar mode="single" selected={localDate} onSelect={handleDateSelect} month={currentMonth} onMonthChange={setCurrentMonth} initialFocus />
         </PopoverContent>
       </Popover>
     </div>
