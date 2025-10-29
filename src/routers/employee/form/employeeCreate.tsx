@@ -30,7 +30,7 @@ const EmployeeForm: React.FC = () => {
               <FormControl>
                 <Select onValueChange={fieldProps.onChange} value={fieldProps.value?.toString() || ''}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select User Id" />
+                    <SelectValue placeholder="Select User" />
                   </SelectTrigger>
                   <SelectContent>
                     {user?.map((option) => (
@@ -81,7 +81,7 @@ const EmployeeForm: React.FC = () => {
             <FormItem>
               <FormLabel>Date Of Birth</FormLabel>
               <FormControl>
-                <DatePicker value={fieldProps.value || new Date()} onChange={fieldProps.onChange} placeholder="Select Date Of Birth" />
+                <DatePicker value={fieldProps.value || undefined} onChange={fieldProps.onChange} placeholder="Select Date Of Birth" />
               </FormControl>
 
               <FormMessage />
