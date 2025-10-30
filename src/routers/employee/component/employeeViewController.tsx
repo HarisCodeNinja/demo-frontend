@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { RootState, useAppDispatch, useAppSelector } from '@/store';
 import { resetSelectedObj } from '@/store/slice/selectedObjSlice';
@@ -8,120 +8,92 @@ import { Label } from '@/components/ui';
 import { getEmployeeDetails } from '../service';
 import EMPLOYEE_CONSTANTS from '../constants';
 
-interface ViewProps {}
+/**
+ * Helper component to display a labeled field
+ */
+const ViewField: React.FC<{ label: string; value: string | number | Date | null | undefined }> = ({ label, value }) => {
+	const displayValue = useMemo(() => {
+		if (value === null || value === undefined) return '-';
+		if (value instanceof Date) return value.toLocaleDateString();
+		return String(value);
+	}, [value]);
 
-const EmployeeViewController: React.FC<ViewProps> = ({}) => {
-  const { [EMPLOYEE_CONSTANTS.ENTITY_KEY]: { showView, primaryKeys } = {} } = useAppSelector((state: RootState) => state.selectedObj);
-  const dispatch = useAppDispatch();
+	return (
+		<div className="space-y-2">
+			<Label>{label}</Label>
+			<div className="flex items-center text-sm bg-muted p-3 rounded-md">{displayValue}</div>
+		</div>
+	);
+};
 
-  const { data: employee, isLoading } = useQuery({
-    queryKey: [EMPLOYEE_CONSTANTS.QUERY_KEY, primaryKeys, primaryKeys?.employeeId, showView],
-    queryFn: () => getEmployeeDetails(primaryKeys?.employeeId || 0),
-    enabled: Boolean(showView && primaryKeys?.employeeId),
-  });
+/**
+ * Modal component for viewing employee details
+ */
+const EmployeeViewController: React.FC = () => {
+	const { [EMPLOYEE_CONSTANTS.ENTITY_KEY]: { showView, primaryKeys } = {} } = useAppSelector(
+		(state: RootState) => state.selectedObj
+	);
+	const dispatch = useAppDispatch();
 
-  const handleClose = React.useCallback(() => {
-    dispatch(resetSelectedObj(EMPLOYEE_CONSTANTS.ENTITY_KEY));
-  }, [dispatch]);
+	const { data: employee, isLoading } = useQuery({
+		queryKey: [EMPLOYEE_CONSTANTS.QUERY_KEY, 'view', primaryKeys?.employeeId],
+		queryFn: () => getEmployeeDetails(primaryKeys?.employeeId || ''),
+		enabled: Boolean(showView && primaryKeys?.employeeId),
+	});
 
-  const Content = () => (
-    <>
-      {isLoading && (
-        <div className="flex items-center justify-center py-10 h-1/2">
-          <Spinner />
-        </div>
-      )}
-      {!isLoading && employee && (
-        <div className="grid grid-cols-1 gap-6 items-start">
-        <div className="space-y-2">
-          <Label>Employee Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.employeeId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>User Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.userId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Employee Unique Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.employeeUniqueId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>First Name</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.firstName ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Last Name</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.lastName ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Date Of Birth</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.dateOfBirth ? new Date(employee?.data?.dateOfBirth).toLocaleDateString() : '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Gender</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.gender ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Phone Number</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.phoneNumber ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Address</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.address ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Personal Email</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.personalEmail ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Employment Start Date</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.employmentStartDate ? new Date(employee?.data?.employmentStartDate).toLocaleDateString() : '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Employment End Date</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.employmentEndDate ? new Date(employee?.data?.employmentEndDate).toLocaleDateString() : '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Department Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.departmentId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Designation Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.designationId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Reporting Manager Id</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.reportingManagerId ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Status</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.status ?? '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Created At</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.createdAt ? new Date(employee?.data?.createdAt).toLocaleDateString() : '-'}</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Updated At</Label>
-          <div className="flex items-center text-sm bg-muted p-3 rounded-md">{employee?.data?.updatedAt ? new Date(employee?.data?.updatedAt).toLocaleDateString() : '-'}</div>
-        </div>
-        </div>
-      )}
-    </>
-  );
+	const handleClose = useCallback(() => {
+		dispatch(resetSelectedObj(EMPLOYEE_CONSTANTS.ENTITY_KEY));
+	}, [dispatch]);
 
-  return (
-    <Controls
-      title={`${EMPLOYEE_CONSTANTS.ENTITY_NAME} Details`}
-      open={showView}
-      onClose={handleClose}
-      type="modal"
-      width={800}
-      loading={isLoading}
-    >
-      <Content />
-    </Controls>
-  );
+	const employeeData = employee?.data;
+
+	return (
+		<Controls
+			title={`${EMPLOYEE_CONSTANTS.ENTITY_NAME} Details`}
+			open={showView}
+			onClose={handleClose}
+			type="modal"
+			width={800}
+			loading={isLoading}
+		>
+			{isLoading && (
+				<div className="flex items-center justify-center py-10 h-1/2">
+					<Spinner />
+				</div>
+			)}
+			{!isLoading && employeeData && (
+				<div className="grid grid-cols-1 gap-6 items-start">
+					<ViewField label="Employee ID" value={employeeData.employeeId} />
+					<ViewField label="User ID" value={employeeData.userId} />
+					<ViewField label="Employee Unique ID" value={employeeData.employeeUniqueId} />
+					<ViewField label="First Name" value={employeeData.firstName} />
+					<ViewField label="Last Name" value={employeeData.lastName} />
+					<ViewField
+						label="Date of Birth"
+						value={employeeData.dateOfBirth ? new Date(employeeData.dateOfBirth) : null}
+					/>
+					<ViewField label="Gender" value={employeeData.gender} />
+					<ViewField label="Phone Number" value={employeeData.phoneNumber} />
+					<ViewField label="Address" value={employeeData.address} />
+					<ViewField label="Personal Email" value={employeeData.personalEmail} />
+					<ViewField
+						label="Employment Start Date"
+						value={employeeData.employmentStartDate ? new Date(employeeData.employmentStartDate) : null}
+					/>
+					<ViewField
+						label="Employment End Date"
+						value={employeeData.employmentEndDate ? new Date(employeeData.employmentEndDate) : null}
+					/>
+					<ViewField label="Department ID" value={employeeData.departmentId} />
+					<ViewField label="Designation ID" value={employeeData.designationId} />
+					<ViewField label="Reporting Manager ID" value={employeeData.reportingManagerId} />
+					<ViewField label="Status" value={employeeData.status} />
+					<ViewField label="Created At" value={employeeData.createdAt ? new Date(employeeData.createdAt) : null} />
+					<ViewField label="Updated At" value={employeeData.updatedAt ? new Date(employeeData.updatedAt) : null} />
+				</div>
+			)}
+		</Controls>
+	);
 };
 
 export default EmployeeViewController;

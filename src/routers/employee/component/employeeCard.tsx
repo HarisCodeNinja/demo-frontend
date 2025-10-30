@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Hash, Heart } from 'lucide-react';
 import { hasAccess } from '@/util/AccessControl';
 import { TableAction } from '@/types/table';
 import { IEmployeeIndex } from '../interface';
+import EMPLOYEE_CONSTANTS from '../constants';
 
 interface EmployeeCardProps {
   record: IEmployeeIndex;
@@ -12,27 +13,34 @@ interface EmployeeCardProps {
   scope: string[];
 }
 
-export const EmployeeCard: React.FC<EmployeeCardProps> = ({ record, actions = [], scope }) => {
-  const getInitials = () => {
-    const init = record.firstName || 'e';
-    return init.toString().substring(0, 2).toUpperCase();
-  };
+const getEmployeeInitials = (firstName: string = 'E'): string => firstName.substring(0, EMPLOYEE_CONSTANTS.CARD.INITIALS_LENGTH).toUpperCase();
 
-  const filteredActions = actions.filter((action: TableAction<IEmployeeIndex>) => {
-    if (action.permission && scope) {
-      const { module, resource, action: actionType } = action.permission;
-      return hasAccess(scope, module, resource, actionType);
-    }
-    return true;
-  });
+/**
+ * Card component for displaying employee information in mobile view
+ */
+export const EmployeeCard: React.FC<EmployeeCardProps> = ({ record, actions = [], scope }) => {
+  const initials = useMemo(() => getEmployeeInitials(record.firstName), [record.firstName]);
+
+  const filteredActions = useMemo(
+    () =>
+      actions.filter((action) => {
+        if (action.permission && scope) {
+          const { module, resource, action: actionType } = action.permission;
+          return hasAccess(scope, module, resource, actionType);
+        }
+        return true;
+      }),
+    [actions, scope],
+  );
 
   return (
     <Card className="mb-4 hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-pink-200">
       <CardContent className="p-5">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md">
-              {getInitials()}
+            <div
+              className={`w-12 h-12 bg-gradient-to-br ${EMPLOYEE_CONSTANTS.CARD.GRADIENT_COLORS.FROM} ${EMPLOYEE_CONSTANTS.CARD.GRADIENT_COLORS.TO} rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md`}>
+              {initials}
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-900 text-lg truncate">{record.firstName || 'Unknown Employee'}</h3>
@@ -54,9 +62,9 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({ record, actions = []
         {filteredActions.length > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="flex gap-2">
-              {filteredActions.map((action: TableAction<IEmployeeIndex>, index: number) => (
+              {filteredActions.map((action, index) => (
                 <Button
-                  key={`${action.key} ${index}`}
+                  key={`${action.key}-${index}`}
                   variant={action.variant || 'outline'}
                   size="sm"
                   onClick={() => action.onClick(record)}
