@@ -114,7 +114,7 @@ const AttendanceForm: React.FC = () => {
                     Check Out Time <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
                   </FormLabel>
                   <FormControl>
-                    <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Select Check Out Time (Optional)" />
+                    <DatePicker mode="datetime" value={field.value} onChange={field.onChange} placeholder="Select Check Out Time (Optional)" />
                   </FormControl>
 
                   <FormMessage />

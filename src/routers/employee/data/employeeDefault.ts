@@ -1,17 +1,24 @@
-export const defaultObject = {
-  userId: undefined,
-  firstName: "",
-  lastName: "",
-  dateOfBirth: new Date(),
-  gender: undefined,
-  phoneNumber: "",
-  address: "",
-  personalEmail: "",
-  employmentStartDate: new Date(),
-  employmentEndDate: new Date(),
-  departmentId: undefined,
-  designationId: undefined,
-  reportingManagerId: undefined,
-  status: "active",
+import { IEmployeeAdd } from '../interface';
+
+/**
+ * Default values for employee form
+ * Aligned with validation schema requirements
+ */
+export const defaultEmployeeObject: Partial<IEmployeeAdd> = {
+	userId: undefined,
+	firstName: '',
+	lastName: '',
+	dateOfBirth: undefined,
+	gender: undefined,
+	phoneNumber: '',
+	address: '',
+	personalEmail: '',
+	employmentStartDate: undefined,
+	employmentEndDate: undefined,
+	departmentId: undefined,
+	designationId: undefined,
+	reportingManagerId: undefined,
+	status: 'active',
 };
-export default defaultObject;
+
+export default defaultEmployeeObject;
