@@ -111,16 +111,16 @@ export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date
   const renderPicker = useMemo(() => {
     switch (mode) {
       case 'week':
-        return <WeekPicker selectedDate={value} year={currentMonth.getFullYear()} onWeekSelect={handleWeekSelect} />;
+        return <WeekPicker selectedDate={value} year={currentMonth.getFullYear()} month={currentMonth.getMonth()} onWeekSelect={handleWeekSelect} />;
 
       case 'month':
-        return <MonthPicker selectedDate={value} year={currentMonth.getFullYear()} onMonthSelect={handleMonthSelect} />;
+        return <MonthPicker selectedDate={value} year={currentMonth.getFullYear()} onMonthSelect={handleMonthSelect} minDate={minDate} maxDate={maxDate} />;
 
       case 'datetime':
       case 'date':
       default:
         return (
-          <>
+          <div className="flex">
             <Calendar
               mode="single"
               selected={value}
@@ -132,14 +132,13 @@ export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date
                 if (maxDate && date > maxDate) return true;
                 return false;
               }}
-              initialFocus
             />
             {mode === 'datetime' && (
-              <div className="px-3 pb-3">
+              <div className="px-3 pb-3 border-l">
                 <TimePicker hour={selectedHour} minute={selectedMinute} onChange={handleTimeChange} disabled={!value} />
               </div>
             )}
-          </>
+          </div>
         );
     }
   }, [mode, value, currentMonth, handleDateSelect, handleWeekSelect, handleMonthSelect, setCurrentMonth, selectedHour, selectedMinute, handleTimeChange, minDate, maxDate]);

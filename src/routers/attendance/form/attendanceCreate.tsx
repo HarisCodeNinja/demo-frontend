@@ -2,7 +2,6 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
-import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { z } from 'zod';
 import { createAttendancePayloadValidator } from '../validation';
 import { useEmployeeOptions } from '../../../option-hooks/useEmployeeOptions';
@@ -98,7 +97,7 @@ const AttendanceForm: React.FC = () => {
                 <FormItem>
                   <FormLabel>Check In Time</FormLabel>
                   <FormControl>
-                    <DateTimePicker value={field.value} onChange={field.onChange} placeholder="Select Check In Time" />
+                    <DatePicker mode="datetime" value={field.value} onChange={field.onChange} placeholder="Select Check In Time" />
                   </FormControl>
 
                   <FormMessage />
