@@ -8,13 +8,15 @@ interface UseDatePickerProps {
   mode?: DatePickerMode;
   minDate?: Date;
   maxDate?: Date;
+  yearsBack?: number;
+  yearsAhead?: number;
 }
 
 /**
  * Optimized hook for DatePicker with memoization and performance optimization
  * Supports multiple modes: date, datetime, week, month
  */
-export const useDatePicker = ({ value, onChange, mode = 'date', minDate, maxDate }: UseDatePickerProps) => {
+export const useDatePicker = ({ value, onChange, mode = 'date', minDate, maxDate, yearsBack = 50, yearsAhead = 50 }: UseDatePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedHour, setSelectedHour] = useState<number>(() => (value ? value.getHours() : 0));
   const [selectedMinute, setSelectedMinute] = useState<number>(() => (value ? value.getMinutes() : 0));
@@ -27,8 +29,8 @@ export const useDatePicker = ({ value, onChange, mode = 'date', minDate, maxDate
     return new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   });
 
-  // Memoized year options (only recreate if min/max dates change)
-  const yearOptions = useMemo(() => generateYearOptions(minDate, maxDate), [minDate, maxDate]);
+  // Memoized year options (only recreate if parameters change)
+  const yearOptions = useMemo(() => generateYearOptions(yearsBack, yearsAhead, minDate, maxDate), [yearsBack, yearsAhead, minDate, maxDate]);
 
   // Handle date selection based on mode
   const handleDateSelect = useCallback(

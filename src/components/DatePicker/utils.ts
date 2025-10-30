@@ -19,13 +19,32 @@ export const MONTH_OPTIONS: readonly MonthOption[] = [
 ] as const;
 
 /**
- * Generate year options based on min/max dates
- * Defaults to current year ± 50 years if not specified
+ * Generate year options based on custom year range or min/max dates
+ * @param yearsBack - How many years back from current year to show (default: 50)
+ * @param yearsAhead - How many years ahead from current year to show (default: 50)
+ * @param minDate - Optional minimum date (will override yearsBack if more restrictive)
+ * @param maxDate - Optional maximum date (will override yearsAhead if more restrictive)
  */
-export const generateYearOptions = (minDate?: Date, maxDate?: Date): number[] => {
+export const generateYearOptions = (
+	yearsBack: number = 50,
+	yearsAhead: number = 50,
+	minDate?: Date,
+	maxDate?: Date
+): number[] => {
 	const currentYear = new Date().getFullYear();
-	const minYear = minDate ? minDate.getFullYear() : currentYear - 50;
-	const maxYear = maxDate ? maxDate.getFullYear() : currentYear + 50;
+
+	// Calculate min/max years based on yearsBack/yearsAhead
+	let minYear = currentYear - yearsBack;
+	let maxYear = currentYear + yearsAhead;
+
+	// Override with minDate/maxDate if they are more restrictive
+	if (minDate) {
+		minYear = Math.max(minYear, minDate.getFullYear());
+	}
+	if (maxDate) {
+		maxYear = Math.min(maxYear, maxDate.getFullYear());
+	}
+
 	const length = maxYear - minYear + 1;
 	return Array.from({ length }, (_, i) => minYear + i);
 };

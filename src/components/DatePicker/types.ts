@@ -16,6 +16,8 @@ export interface DatePickerProps {
   minDate?: Date;
   maxDate?: Date;
   showClearButton?: boolean;
+  yearsBack?: number; // How many years back from current year to show (default: 50)
+  yearsAhead?: number; // How many years ahead from current year to show (default: 50)
 }
 
 /**

@@ -29,8 +29,11 @@ import { MonthPicker } from './components/MonthPicker';
  *
  * // Month picker
  * <DatePicker mode="month" value={date} onChange={setDate} />
+ *
+ * // Custom year range (10 years back, 5 years ahead from current year)
+ * <DatePicker yearsBack={10} yearsAhead={5} value={date} onChange={setDate} />
  */
-export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date', placeholder, className, disabled = false, minDate, maxDate, showClearButton = true }) => {
+export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date', placeholder, className, disabled = false, minDate, maxDate, showClearButton = true, yearsBack = 50, yearsAhead = 50 }) => {
   const {
     isOpen,
     setIsOpen,
@@ -53,6 +56,8 @@ export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date
     mode,
     minDate,
     maxDate,
+    yearsBack,
+    yearsAhead,
   });
 
   // Memoize display text for performance
@@ -114,7 +119,7 @@ export const DatePicker = memo<DatePickerProps>(({ value, onChange, mode = 'date
         return <WeekPicker selectedDate={value} year={currentMonth.getFullYear()} month={currentMonth.getMonth()} onWeekSelect={handleWeekSelect} />;
 
       case 'month':
-        return <MonthPicker selectedDate={value} year={currentMonth.getFullYear()} onMonthSelect={handleMonthSelect} minDate={minDate} maxDate={maxDate} />;
+        return <MonthPicker selectedDate={value} year={currentMonth.getFullYear()} onMonthSelect={handleMonthSelect} minDate={minDate} maxDate={maxDate} yearsBack={yearsBack} yearsAhead={yearsAhead} />;
 
       case 'datetime':
       case 'date':

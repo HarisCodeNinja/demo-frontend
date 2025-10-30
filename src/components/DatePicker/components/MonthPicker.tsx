@@ -11,6 +11,8 @@ interface MonthPickerProps {
   onMonthSelect: (month: number, year: number) => void;
   minDate?: Date;
   maxDate?: Date;
+  yearsBack?: number;
+  yearsAhead?: number;
 }
 
 /**
@@ -18,7 +20,7 @@ interface MonthPickerProps {
  * Shows a 3x4 grid of months for quick selection with year navigation
  * Memoized to prevent unnecessary re-renders
  */
-export const MonthPicker = memo<MonthPickerProps>(({ selectedDate, year: initialYear, onMonthSelect, minDate, maxDate }) => {
+export const MonthPicker = memo<MonthPickerProps>(({ selectedDate, year: initialYear, onMonthSelect, minDate, maxDate, yearsBack = 50, yearsAhead = 50 }) => {
   const [currentYear, setCurrentYear] = useState(initialYear);
 
   // Get selected month and year for comparison
@@ -28,7 +30,7 @@ export const MonthPicker = memo<MonthPickerProps>(({ selectedDate, year: initial
   }, [selectedDate]);
 
   // Generate year options
-  const yearOptions = useMemo(() => generateYearOptions(minDate, maxDate), [minDate, maxDate]);
+  const yearOptions = useMemo(() => generateYearOptions(yearsBack, yearsAhead, minDate, maxDate), [yearsBack, yearsAhead, minDate, maxDate]);
 
   // Handle year navigation
   const handlePreviousYear = () => {
