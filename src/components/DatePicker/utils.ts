@@ -70,7 +70,7 @@ export const getWeekNumber = (date: Date): number => {
 export const getWeekStartDate = (date: Date): Date => {
 	const dayOfWeek = date.getDay();
 	const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-	return new Date(date.getFullYear(), date.getMonth(), diff);
+	return new Date(date.getFullYear(), date.getMonth(), diff, 12, 0, 0, 0);
 };
 
 /**
@@ -78,7 +78,7 @@ export const getWeekStartDate = (date: Date): Date => {
  */
 export const getWeekEndDate = (date: Date): Date => {
 	const startDate = getWeekStartDate(date);
-	return new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);
+	return new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6, 12, 0, 0, 0);
 };
 
 /**

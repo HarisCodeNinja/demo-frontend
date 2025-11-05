@@ -50,21 +50,21 @@ export const useDatePicker = ({ value, onChange, mode = 'date', minDate, maxDate
           break;
 
         case 'week':
-          // Set to the start of the week (Monday)
+          // Set to the start of the week (Monday) at noon to avoid timezone issues
           const dayOfWeek = date.getDay();
           const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-          finalDate = new Date(date.getFullYear(), date.getMonth(), diff);
+          finalDate = new Date(date.getFullYear(), date.getMonth(), diff, 12, 0, 0, 0);
           break;
 
         case 'month':
-          // Set to the first day of the month
-          finalDate = new Date(date.getFullYear(), date.getMonth(), 1);
+          // Set to the first day of the month at noon to avoid timezone issues
+          finalDate = new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
           break;
 
         case 'date':
         default:
-          // Standard date selection
-          finalDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+          // Standard date selection - set time to noon to avoid timezone issues
+          finalDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
           break;
       }
 
@@ -123,7 +123,7 @@ export const useDatePicker = ({ value, onChange, mode = 'date', minDate, maxDate
   // Handle month-only selection
   const handleMonthSelect = useCallback(
     (month: number, year: number) => {
-      const date = new Date(year, month, 1);
+      const date = new Date(year, month, 1, 12, 0, 0, 0);
       onChange?.(date);
       setIsOpen(false);
     },
