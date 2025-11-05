@@ -2,8 +2,8 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
+import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users,
@@ -43,6 +43,9 @@ const HomePage: React.FC = () => {
       const response = await getAllDashboardData();
       return response.data;
     },
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
     refetchInterval: 60000, // Refetch every minute
     enabled: isLoggedIn && !!user, // Only fetch if user is logged in
   });
@@ -60,7 +63,11 @@ const HomePage: React.FC = () => {
   }
 
   if (isLoading) {
-    return <></>;
+    return (
+      <div className="flex items-center justify-center h-1/2">
+        <Spinner />
+      </div>
+    );
   }
 
   if (isError) {
