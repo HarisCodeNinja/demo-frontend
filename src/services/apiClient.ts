@@ -17,7 +17,7 @@ let isRefreshing = false;
 let failedQueue: any = [];
 
 const processQueue = (error: any, token = null) => {
-  failedQueue.forOf(({ resolve, reject }: any) => {
+  failedQueue.forEach(({ resolve, reject }: any) => {
     if (error) {
       reject(error);
     } else {
