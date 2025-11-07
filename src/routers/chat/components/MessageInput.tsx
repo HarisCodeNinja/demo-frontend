@@ -1,46 +1,53 @@
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, useCallback, memo, type KeyboardEvent, type ChangeEvent } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
 interface MessageInputProps {
-  onSendMessage: (message: string) => void;
-  isLoading?: boolean;
-  placeholder?: string;
+  readonly onSendMessage: (message: string) => void;
+  readonly isLoading?: boolean;
+  readonly placeholder?: string;
 }
 
-export const MessageInput = ({
+export const MessageInput = memo<MessageInputProps>(({
   onSendMessage,
   isLoading = false,
   placeholder = 'Ask me anything about the system...'
-}: MessageInputProps) => {
+}) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSend = () => {
-    if (message.trim() && !isLoading) {
-      onSendMessage(message.trim());
-      setMessage('');
-      // Reset textarea height
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-      }
+  const resetTextareaHeight = useCallback(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
     }
-  };
+  }, []);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleSend = useCallback(() => {
+    const trimmedMessage = message.trim();
+    if (trimmedMessage && !isLoading) {
+      onSendMessage(trimmedMessage);
+      setMessage('');
+      resetTextareaHeight();
+    }
+  }, [message, isLoading, onSendMessage, resetTextareaHeight]);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
-  };
+  }, [handleSend]);
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInput = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
     // Auto-resize textarea
-    e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
-  };
+    const target = e.target;
+    target.style.height = 'auto';
+    target.style.height = `${Math.min(target.scrollHeight, 200)}px`;
+  }, []);
+
+  const isMessageEmpty = !message.trim();
 
   return (
     <div className="border-t p-4 bg-background">
@@ -54,23 +61,32 @@ export const MessageInput = ({
           disabled={isLoading}
           className="min-h-[60px] max-h-[200px] resize-none"
           rows={1}
+          aria-label="Message input"
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="true"
         />
         <Button
           onClick={handleSend}
-          disabled={!message.trim() || isLoading}
+          disabled={isMessageEmpty || isLoading}
           size="icon"
           className="h-[60px] w-[60px] flex-shrink-0"
+          aria-label="Send message"
+          type="button"
         >
           {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
           ) : (
-            <Send className="w-5 h-5" />
+            <Send className="w-5 h-5" aria-hidden="true" />
           )}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground mt-2">
+      <p className="text-xs text-muted-foreground mt-2" role="note">
         Press Enter to send, Shift+Enter for new line
       </p>
     </div>
   );
-};
+});
+
+MessageInput.displayName = 'MessageInput';
