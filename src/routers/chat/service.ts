@@ -44,9 +44,18 @@ export class ChatService {
   ): Promise<{ content: string; suggestions?: string[]; relatedModules?: IModuleInfo[] }> {
     const lowerQuery = query.toLowerCase();
 
-    // Intent detection
+    // Intent detection - order matters!
     if (this.isGreeting(lowerQuery)) {
       return this.handleGreeting();
+    }
+
+    // Check for specific workflows first (before general module query)
+    if (this.isWorkflowQuery(lowerQuery)) {
+      return this.handleWorkflowQuery(lowerQuery);
+    }
+
+    if (this.isHowToQuery(lowerQuery)) {
+      return this.handleHowToQuery(lowerQuery);
     }
 
     if (this.isModuleQuery(lowerQuery)) {
@@ -57,20 +66,12 @@ export class ChatService {
       return this.handleFeatureQuery(lowerQuery);
     }
 
-    if (this.isHowToQuery(lowerQuery)) {
-      return this.handleHowToQuery(lowerQuery);
-    }
-
     if (this.isNavigationQuery(lowerQuery)) {
       return this.handleNavigationQuery(lowerQuery);
     }
 
     if (this.isComparisonQuery(lowerQuery)) {
       return this.handleComparisonQuery(lowerQuery);
-    }
-
-    if (this.isWorkflowQuery(lowerQuery)) {
-      return this.handleWorkflowQuery(lowerQuery);
     }
 
     // Default fallback
@@ -95,7 +96,7 @@ export class ChatService {
   }
 
   private isHowToQuery(query: string): boolean {
-    const howToKeywords = ['how to', 'how do i', 'how can i', 'steps to', 'guide'];
+    const howToKeywords = ['how to', 'how do i', 'how can i', 'steps to', 'guide', 'manage'];
     return howToKeywords.some(k => query.includes(k));
   }
 
@@ -110,18 +111,20 @@ export class ChatService {
 
   private isWorkflowQuery(query: string): boolean {
     const workflowKeywords = ['process', 'workflow', 'flow', 'procedure', 'steps'];
-    return workflowKeywords.some(k => query.includes(k));
+    const specificWorkflows = ['recruitment', 'recruit', 'hiring', 'hire', 'payroll', 'salary processing', 'onboarding'];
+    return workflowKeywords.some(k => query.includes(k)) ||
+           specificWorkflows.some(k => query.includes(k));
   }
 
   // Response handlers
   private handleGreeting(): { content: string; suggestions: string[] } {
     return {
-      content: `Hello! I'm your AI assistant for this HRMS system. I can help you understand modules, features, and guide you through various processes.\n\nHere's what I can do:\n- Explain any module or feature\n- Guide you through workflows\n- Help you find specific functionality\n- Answer questions about the system\n\nWhat would you like to know?`,
+      content: `Hello! 👋 I'm your AI assistant for this HRMS system. I can help you understand modules, features, and guide you through various processes.\n\n**Here's what I can do:**\n• Explain any module or feature\n• Guide you through workflows\n• Help you find specific functionality\n• Answer questions about the system\n\nWhat would you like to know?`,
       suggestions: [
         'What modules are available?',
         'How do I manage employees?',
-        'Tell me about the recruitment process',
-        'What can I do with attendance tracking?'
+        'Explain the recruitment process',
+        'Tell me about payroll'
       ]
     };
   }
@@ -130,16 +133,50 @@ export class ChatService {
     // Extract module mentions from query
     const mentionedModules = this.extractModules(query);
 
-    if (mentionedModules.length === 0) {
+    if (mentionedModules.length === 0 && query.includes('what modules')) {
       // List all modules
-      const moduleList = systemModules.map(m => `• **${m.name}** - ${m.description}`).join('\n');
+      const coreModules = systemModules.filter(m =>
+        ['Dashboard', 'User Management', 'Departments', 'Designations', 'Locations', 'Skills', 'Employee Management'].includes(m.name)
+      );
+      const recruitmentModules = systemModules.filter(m =>
+        m.name.includes('Job') || m.name.includes('Candidate') || m.name.includes('Interview') || m.name.includes('Offer')
+      );
+      const hrModules = systemModules.filter(m =>
+        m.name.includes('Attendance') || m.name.includes('Leave') || m.name.includes('Document')
+      );
+      const payrollModules = systemModules.filter(m =>
+        m.name.includes('Salary') || m.name.includes('Payslip')
+      );
+      const performanceModules = systemModules.filter(m =>
+        m.name.includes('Goal') || m.name.includes('Performance') || m.name.includes('Competenc') || m.name.includes('Learning')
+      );
+
+      let response = `# Available Modules\n\nThe HRMS system has **${systemModules.length} modules** organized into key areas:\n\n`;
+
+      response += `## 📊 Core Modules (${coreModules.length})\n`;
+      response += coreModules.map(m => `• **[${m.name}](${m.path})** - ${m.description}`).join('\n') + '\n\n';
+
+      response += `## 🎯 Recruitment (${recruitmentModules.length} modules)\n`;
+      response += recruitmentModules.map(m => `• **[${m.name}](${m.path})** - ${m.description}`).join('\n') + '\n\n';
+
+      response += `## 📅 Time & Attendance (${hrModules.length} modules)\n`;
+      response += hrModules.map(m => `• **[${m.name}](${m.path})** - ${m.description}`).join('\n') + '\n\n';
+
+      response += `## 💰 Payroll (${payrollModules.length} modules)\n`;
+      response += payrollModules.map(m => `• **[${m.name}](${m.path})** - ${m.description}`).join('\n') + '\n\n';
+
+      response += `## 📈 Performance & Development (${performanceModules.length} modules)\n`;
+      response += performanceModules.map(m => `• **[${m.name}](${m.path})** - ${m.description}`).join('\n') + '\n\n';
+
+      response += `Click on any module name to navigate there, or ask me about specific modules!`;
+
       return {
-        content: `Here are all the available modules in the system:\n\n${moduleList}\n\nWould you like to know more about any specific module?`,
+        content: response,
         suggestions: [
           'Tell me about Employee Management',
-          'What is the recruitment process?',
-          'How does attendance tracking work?',
-          'Explain the performance review module'
+          'How does recruitment work?',
+          'Explain payroll processing',
+          'What are performance reviews?'
         ],
         relatedModules: []
       };
@@ -147,21 +184,21 @@ export class ChatService {
 
     // Provide detailed info about mentioned modules
     const module = mentionedModules[0];
-    let response = `## ${module.name}\n\n${module.description}\n\n`;
+    let response = `# ${module.name}\n\n${module.description}\n\n`;
 
     if (module.features && module.features.length > 0) {
-      response += `**Key Features:**\n${module.features.map(f => `• ${f}`).join('\n')}\n\n`;
+      response += `## ✨ Key Features\n${module.features.map(f => `• ${f}`).join('\n')}\n\n`;
     }
 
     if (module.endpoints && module.endpoints.length > 0) {
-      response += `**Available Endpoints:**\n${module.endpoints.map(e => `• \`${e}\``).join('\n')}\n\n`;
+      response += `## 🔗 API Endpoints\n${module.endpoints.map(e => `• \`${e}\``).join('\n')}\n\n`;
     }
 
     if (module.relatedModules && module.relatedModules.length > 0) {
-      response += `**Related Modules:** ${module.relatedModules.join(', ')}\n\n`;
+      response += `## 🔄 Related Modules\n${module.relatedModules.join(', ')}\n\n`;
     }
 
-    response += `**Access:** Navigate to [${module.path}](${module.path})`;
+    response += `**📍 Access:** Navigate to [${module.path}](${module.path})`;
 
     const relatedModules = getRelatedModules(module.name);
 
@@ -192,7 +229,7 @@ export class ChatService {
       };
     }
 
-    let response = `Here are the modules that support features related to "${keywords.join(', ')}":\n\n`;
+    let response = `Here are the modules that support features related to **"${keywords.join(', ')}"**:\n\n`;
 
     relevantModules.forEach(module => {
       response += `### ${module.name}\n${module.description}\n`;
@@ -208,33 +245,183 @@ export class ChatService {
     };
   }
 
-  private handleHowToQuery(query: string): { content: string; suggestions: string[] } {
+  private handleHowToQuery(query: string): { content: string; suggestions: string[]; relatedModules?: IModuleInfo[] } {
     // Extract action from query
-    if (query.includes('employee') || query.includes('hire')) {
+    if (query.includes('employee') || query.includes('manage employee')) {
+      const relatedModules = [
+        getModuleByPath('/employees'),
+        getModuleByPath('/departments'),
+        getModuleByPath('/designations'),
+        getModuleByPath('/attendances')
+      ].filter(Boolean) as IModuleInfo[];
+
       return {
-        content: `## How to Manage Employees\n\n**Adding a New Employee:**\n1. Navigate to **Employee Management** (/employees)\n2. Click "Add New Employee" button\n3. Fill in personal information (name, email, phone)\n4. Assign department, designation, and location\n5. Set employment details (join date, employee ID)\n6. Add skills and competencies\n7. Upload required documents\n8. Save the employee record\n\n**For Recruitment:**\n1. Create a **Job Opening** (/job-openings)\n2. Define required skills (/job-opening-skills)\n3. Review **Candidates** (/candidates) who apply\n4. Schedule **Interviews** (/interviews)\n5. Generate **Offer Letter** (/offer-letters) for selected candidate\n6. Convert to **Employee** once accepted`,
+        content: `# How to Manage Employees
+
+## 📝 Adding a New Employee
+
+1. Navigate to **[Employee Management](/employees)**
+2. Click the "Add New Employee" button
+3. Fill in required information:
+   - Personal details (name, email, phone, address)
+   - Employment information (employee ID, join date)
+   - Department, designation, and location assignments
+   - Skills and competencies
+4. Upload required documents (resume, ID, certificates)
+5. Save the employee record
+
+## 🔄 Updating Employee Information
+
+1. Go to **[Employee Management](/employees)**
+2. Search for the employee using filters
+3. Click on the employee record
+4. Update necessary fields
+5. Save changes
+
+## 👥 Employee Onboarding Workflow
+
+1. **Hire through recruitment** or **add directly**
+2. Assign to **[Department](/departments)** and **[Designation](/designations)**
+3. Set up **[Skills](/skills)** profile
+4. Configure attendance tracking in **[Attendances](/attendances)**
+5. Set up leave balance in **[Leave Applications](/leave-applications)**
+6. Add to **[Salary Structure](/salary-structures)** for payroll
+7. Set initial **[Goals](/goals)** and performance expectations
+
+## 📊 Tracking & Management
+
+• View all employees in one dashboard
+• Filter by department, designation, location
+• Track attendance and leave
+• Monitor performance and goals
+• Manage documents and certificates
+• Generate employee reports`,
         suggestions: [
-          'Tell me about the recruitment process',
+          'Explain the recruitment process',
           'How do I track attendance?',
-          'Explain leave management'
-        ]
+          'Tell me about performance reviews'
+        ],
+        relatedModules
       };
     }
 
     if (query.includes('leave') || query.includes('time off')) {
       return {
-        content: `## How to Manage Leave\n\n**For Employees:**\n1. Go to **Leave Applications** (/leave-applications)\n2. Click "Apply for Leave"\n3. Select leave type (sick, vacation, personal)\n4. Choose start and end dates\n5. Add reason/notes\n6. Submit for approval\n\n**For Managers:**\n1. View pending applications in **Leave Applications**\n2. Review employee's leave balance\n3. Check attendance history\n4. Approve or reject with comments\n\n**Setup:**\n- Configure leave types in **Leave Types** (/leave-types)\n- Set policies, accrual rules, and balances`,
+        content: `# Leave Management Guide
+
+## 👤 For Employees: Applying for Leave
+
+1. Go to **[Leave Applications](/leave-applications)**
+2. Click "Apply for Leave" button
+3. Select leave type (sick, vacation, personal, etc.)
+4. Choose start and end dates
+5. Add reason/notes for the leave request
+6. Check your available leave balance
+7. Submit for approval
+
+## 👔 For Managers: Approving Leave
+
+1. Navigate to **[Leave Applications](/leave-applications)**
+2. View pending leave requests
+3. Review employee's:
+   - Leave balance
+   - Attendance history
+   - Previous leave records
+4. Approve or reject with comments
+5. System updates leave balance automatically
+
+## ⚙️ System Setup (HR/Admin)
+
+### Configure Leave Types
+• Go to **[Leave Types](/leave-types)**
+• Create different leave categories (sick, vacation, personal, maternity, etc.)
+• Set policies for each type:
+  - Maximum days allowed
+  - Accrual rules (how leave accumulates)
+  - Carry-forward policies
+  - Required approval levels
+
+### Managing Leave Balances
+• Set annual leave quotas per employee
+• Configure accrual rates (monthly/yearly)
+• Set up leave encashment rules
+• Track leave history and patterns
+
+## 📊 Leave Reports & Analytics
+• View team leave calendar
+• Track leave utilization
+• Monitor attendance patterns
+• Generate leave reports`,
         suggestions: [
           'What leave types are available?',
           'How does attendance tracking work?',
-          'Tell me about the approval workflow'
+          'Tell me about payroll'
         ]
       };
     }
 
     if (query.includes('performance') || query.includes('review')) {
       return {
-        content: `## How to Conduct Performance Reviews\n\n**Setup:**\n1. Define **Competencies** (/competencies) for roles\n2. Map competencies to roles in **Role Competencies** (/role-competencies)\n3. Assess employee competencies in **Employee Competencies** (/employee-competencies)\n\n**Review Process:**\n1. Set employee **Goals** (/goals) at the start of period\n2. Track progress throughout the period\n3. Schedule review in **Performance Reviews** (/performance-reviews)\n4. Collect feedback from managers and peers\n5. Rate against competencies and goals\n6. Create development plan\n7. Assign **Learning Plans** (/learning-plans) for improvement`,
+        content: `# Performance Review Process
+
+## 🎯 Step 1: Setup (HR/Admin)
+
+### Define Competencies
+1. Go to **[Competencies](/competencies)**
+2. Create competency framework (Leadership, Communication, Technical Skills, etc.)
+3. Define behavioral indicators for each competency
+4. Set proficiency levels (1-5 scale)
+
+### Map to Roles
+1. Navigate to **[Role Competencies](/role-competencies)**
+2. Link required competencies to each job role
+3. Define expected proficiency levels
+4. Create role profiles
+
+### Assess Employees
+1. Visit **[Employee Competencies](/employee-competencies)**
+2. Evaluate current competency levels
+3. Identify skill gaps
+4. Track certification and training
+
+## 📈 Step 2: Goal Setting
+
+1. Go to **[Goals](/goals)** at the start of review period
+2. Set SMART goals for each employee:
+   - Specific and measurable
+   - Aligned with company objectives
+   - Time-bound with deadlines
+3. Assign goal owners and reviewers
+4. Track progress throughout the period
+
+## 📝 Step 3: Conduct Review
+
+1. Navigate to **[Performance Reviews](/performance-reviews)**
+2. Schedule review meetings
+3. Collect feedback:
+   - Self-assessment
+   - Manager evaluation
+   - Peer feedback (360-degree)
+4. Rate against:
+   - Competencies
+   - Goals achievement
+   - Key performance indicators
+5. Provide constructive feedback
+6. Identify strengths and areas for improvement
+
+## 🎓 Step 4: Development Planning
+
+1. Based on review results, create **[Learning Plans](/learning-plans)**
+2. Assign training programs
+3. Set skill development goals
+4. Schedule follow-up reviews
+5. Track progress and certification
+
+## 📊 Benefits
+• Data-driven performance insights
+• Fair and transparent evaluation
+• Clear career progression paths
+• Continuous employee development`,
         suggestions: [
           'Tell me about competencies',
           'How do I set goals?',
@@ -246,7 +433,7 @@ export class ChatService {
     return {
       content: `I can help you with various processes. Here are the main workflows:\n\n• **Employee Management** - Hiring, onboarding, profile management\n• **Recruitment** - Job postings, candidate tracking, interviews\n• **Attendance & Leave** - Time tracking, leave applications\n• **Payroll** - Salary structures, payslip generation\n• **Performance** - Goals, reviews, development plans\n\nWhat specific process would you like to know about?`,
       suggestions: [
-        'How do I hire an employee?',
+        'How do I manage employees?',
         'How do I manage leave?',
         'How do I conduct performance reviews?'
       ]
@@ -270,11 +457,11 @@ export class ChatService {
     }
 
     return {
-      content: `I can help you navigate to any module. Here are the main sections:\n\n**Core Modules:**\n• Dashboard - /\n• Employees - /employees\n• Departments - /departments\n\n**Recruitment:**\n• Job Openings - /job-openings\n• Candidates - /candidates\n• Interviews - /interviews\n\n**Time & Attendance:**\n• Attendance - /attendances\n• Leave Applications - /leave-applications\n\n**Payroll:**\n• Salary Structures - /salary-structures\n• Payslips - /payslips\n\nWhich module would you like to access?`,
+      content: `I can help you navigate to any module. Here are the main sections:\n\n**Core Modules:**\n• Dashboard - [/](/)\n• Employees - [/employees](/employees)\n• Departments - [/departments](/departments)\n\n**Recruitment:**\n• Job Openings - [/job-openings](/job-openings)\n• Candidates - [/candidates](/candidates)\n• Interviews - [/interviews](/interviews)\n\n**Time & Attendance:**\n• Attendance - [/attendances](/attendances)\n• Leave Applications - [/leave-applications](/leave-applications)\n\n**Payroll:**\n• Salary Structures - [/salary-structures](/salary-structures)\n• Payslips - [/payslips](/payslips)\n\nWhich module would you like to access?`,
       suggestions: [
         'Show me all modules',
         'Take me to employee management',
-        'Where is the dashboard?'
+        'What modules are available?'
       ]
     };
   }
@@ -282,7 +469,7 @@ export class ChatService {
   private handleComparisonQuery(query: string): { content: string; suggestions: string[] } {
     if (query.includes('designation') && query.includes('job level')) {
       return {
-        content: `## Designations vs Job Levels\n\n**Designations** (/designations):\n• Specific job titles (e.g., "Software Engineer", "HR Manager")\n• Define the role and responsibilities\n• Used for day-to-day identification\n• Can have multiple people with same designation\n\n**Job Levels** (/job-levels):\n• Career progression tiers (e.g., "Junior", "Senior", "Lead")\n• Define hierarchy and career paths\n• Linked to compensation bands\n• Used for promotions and salary structures\n\n**Relationship:** An employee has both - e.g., "Senior Software Engineer" where "Software Engineer" is the designation and "Senior" is the job level.`,
+        content: `## Designations vs Job Levels\n\n**Designations** ([/designations](/designations)):\n• Specific job titles (e.g., "Software Engineer", "HR Manager")\n• Define the role and responsibilities\n• Used for day-to-day identification\n• Can have multiple people with same designation\n\n**Job Levels** ([/job-levels](/job-levels)):\n• Career progression tiers (e.g., "Junior", "Senior", "Lead")\n• Define hierarchy and career paths\n• Linked to compensation bands\n• Used for promotions and salary structures\n\n**Relationship:** An employee has both - e.g., "Senior Software Engineer" where "Software Engineer" is the designation and "Senior" is the job level.`,
         suggestions: [
           'Tell me about salary structures',
           'How do I set up job levels?',
@@ -293,7 +480,7 @@ export class ChatService {
 
     if (query.includes('skill') && query.includes('competenc')) {
       return {
-        content: `## Skills vs Competencies\n\n**Skills** (/skills):\n• Specific technical or functional abilities\n• Examples: "JavaScript", "Data Analysis", "Public Speaking"\n• Can be learned through training\n• Easily measurable and testable\n• Used in job requirements and candidate matching\n\n**Competencies** (/competencies):\n• Broader behavioral characteristics\n• Examples: "Leadership", "Problem Solving", "Teamwork"\n• Combination of skills, knowledge, and attitudes\n• Assessed through observations and reviews\n• Used in performance evaluations\n\n**Relationship:** Competencies often encompass multiple skills. Employee development tracks both.`,
+        content: `## Skills vs Competencies\n\n**Skills** ([/skills](/skills)):\n• Specific technical or functional abilities\n• Examples: "JavaScript", "Data Analysis", "Public Speaking"\n• Can be learned through training\n• Easily measurable and testable\n• Used in job requirements and candidate matching\n\n**Competencies** ([/competencies](/competencies)):\n• Broader behavioral characteristics\n• Examples: "Leadership", "Problem Solving", "Teamwork"\n• Combination of skills, knowledge, and attitudes\n• Assessed through observations and reviews\n• Used in performance evaluations\n\n**Relationship:** Competencies often encompass multiple skills. Employee development tracks both.`,
         suggestions: [
           'How do I assess competencies?',
           'Tell me about skill management',
@@ -312,35 +499,258 @@ export class ChatService {
     };
   }
 
-  private handleWorkflowQuery(query: string): { content: string; suggestions: string[] } {
-    if (query.includes('recruit') || query.includes('hiring')) {
+  private handleWorkflowQuery(query: string): { content: string; suggestions: string[]; relatedModules?: IModuleInfo[] } {
+    if (query.includes('recruit') || query.includes('hiring') || query.includes('recruitment')) {
+      const relatedModules = [
+        getModuleByPath('/job-openings'),
+        getModuleByPath('/candidates'),
+        getModuleByPath('/interviews'),
+        getModuleByPath('/offer-letters')
+      ].filter(Boolean) as IModuleInfo[];
+
       return {
-        content: `## Recruitment Workflow\n\n**Step 1: Job Opening**\n• Create job posting in **Job Openings** (/job-openings)\n• Define requirements, responsibilities, and salary range\n• Add required skills in **Job Opening Skills** (/job-opening-skills)\n\n**Step 2: Candidate Sourcing**\n• Receive applications in **Candidates** (/candidates)\n• Screen resumes and qualifications\n• Assess candidate skills in **Candidate Skills** (/candidate-skills)\n\n**Step 3: Interview Process**\n• Schedule interviews in **Interviews** (/interviews)\n• Assign interviewers and set time slots\n• Collect feedback and ratings\n• Make hiring decision\n\n**Step 4: Offer & Onboarding**\n• Generate offer letter in **Offer Letters** (/offer-letters)\n• Get candidate acceptance\n• Create employee record in **Employees** (/employees)\n• Assign department, designation, and setup access`,
+        content: `# Recruitment Workflow
+
+The complete end-to-end hiring process:
+
+## 📋 Step 1: Create Job Opening
+
+1. Navigate to **[Job Openings](/job-openings)**
+2. Click "Create New Job Opening"
+3. Enter job details:
+   - Job title and description
+   - Department and location
+   - Salary range
+   - Required experience level
+   - Responsibilities and requirements
+4. Go to **[Job Opening Skills](/job-opening-skills)**
+5. Add required and preferred skills
+6. Set skill proficiency levels
+7. Publish the job opening
+
+## 👥 Step 2: Candidate Sourcing & Screening
+
+1. Receive applications in **[Candidates](/candidates)**
+2. Review resumes and profiles
+3. Screen candidates based on:
+   - Education and experience
+   - Skills match (view in **[Candidate Skills](/candidate-skills)**)
+   - Cultural fit
+4. Shortlist candidates for interviews
+5. Update candidate status (screening, shortlisted, rejected)
+
+## 🎤 Step 3: Interview Process
+
+1. Schedule interviews in **[Interviews](/interviews)**
+2. Set up interview rounds:
+   - Technical screening
+   - HR interview
+   - Manager interview
+   - Final round
+3. Assign interviewers
+4. Set interview dates and times
+5. Send invitations to candidates
+6. Collect feedback and ratings from each interviewer
+7. Make hiring decision based on:
+   - Interview scores
+   - Skills assessment
+   - Cultural fit
+   - Salary expectations
+
+## 📄 Step 4: Offer & Onboarding
+
+1. Generate offer letter in **[Offer Letters](/offer-letters)**
+2. Include:
+   - Compensation details
+   - Benefits package
+   - Start date
+   - Terms and conditions
+3. Send offer to selected candidate
+4. Track offer status (sent, accepted, rejected, negotiating)
+5. Once accepted:
+   - Create employee record in **[Employees](/employees)**
+   - Assign department and designation
+   - Set up user access
+   - Initiate onboarding process
+6. Update job opening status to "filled"
+
+## 📊 Throughout the Process
+
+• Track all candidates in one place
+• Monitor hiring pipeline metrics
+• Collaborate with team on decisions
+• Maintain candidate communication
+• Generate recruitment reports
+
+## 💡 Best Practices
+
+• Define clear job requirements upfront
+• Use structured interview questions
+• Involve multiple stakeholders
+• Provide timely feedback to candidates
+• Document all decisions
+• Track time-to-hire and cost-per-hire metrics`,
         suggestions: [
           'How do I create a job opening?',
           'Tell me about interview management',
-          'How do I convert candidate to employee?'
-        ]
+          'How do I add employee after hiring?'
+        ],
+        relatedModules
       };
     }
 
-    if (query.includes('payroll') || query.includes('salary')) {
+    if (query.includes('payroll') || query.includes('salary') || query.includes('payslip')) {
+      const relatedModules = [
+        getModuleByPath('/salary-structures'),
+        getModuleByPath('/attendances'),
+        getModuleByPath('/leave-applications'),
+        getModuleByPath('/payslips')
+      ].filter(Boolean) as IModuleInfo[];
+
       return {
-        content: `## Payroll Processing Workflow\n\n**Step 1: Setup**\n• Define salary components in **Salary Structures** (/salary-structures)\n• Create templates for different roles/levels\n• Set up deductions and benefits\n\n**Step 2: Track Attendance**\n• Monitor daily attendance in **Attendances** (/attendances)\n• Track work hours and overtime\n• Process leave applications\n\n**Step 3: Generate Payslips**\n• Calculate salaries based on attendance\n• Apply salary structure components\n• Add bonuses or deductions\n• Generate **Payslips** (/payslips)\n\n**Step 4: Distribution**\n• Review and approve payroll\n• Distribute payslips to employees\n• Process payments\n• Maintain payment history`,
+        content: `# Payroll Processing Workflow
+
+Complete guide to processing employee payroll:
+
+## ⚙️ Step 1: Initial Setup
+
+### Create Salary Structures
+1. Go to **[Salary Structures](/salary-structures)**
+2. Create salary templates for different:
+   - Job levels (Junior, Senior, Lead, Manager)
+   - Departments
+   - Roles and designations
+3. Define salary components:
+   - **Earnings:** Base salary, HRA, transport allowance, performance bonus
+   - **Deductions:** Tax (TDS), provident fund, insurance, loans
+   - **Benefits:** Medical insurance, meal vouchers, stock options
+4. Set calculation formulas for each component
+5. Define salary ranges and bands
+6. Assign salary structures to employees
+
+## 📅 Step 2: Track Attendance & Time
+
+### Monitor Daily Attendance
+1. Track in **[Attendances](/attendances)**
+2. Record:
+   - Check-in and check-out times
+   - Work hours
+   - Overtime hours
+   - Late arrivals/early departures
+   - Breaks
+3. Set attendance policies:
+   - Standard working hours
+   - Overtime rates
+   - Late/absence deductions
+
+### Process Leave Applications
+1. View approved leaves in **[Leave Applications](/leave-applications)**
+2. Identify:
+   - Paid leaves
+   - Unpaid leaves
+   - Half-day leaves
+3. Calculate leave impact on salary:
+   - Deduct for unpaid leaves
+   - No deduction for paid leaves
+4. Update leave balances
+
+## 💰 Step 3: Calculate Payroll
+
+### Run Payroll Calculation
+1. Select payroll period (monthly, bi-weekly)
+2. System automatically calculates:
+   - **Gross Salary:** Base + allowances + bonuses
+   - **Attendance Impact:** Overtime pay, absence deductions
+   - **Leave Deductions:** Unpaid leave days
+   - **Statutory Deductions:** Tax, provident fund, insurance
+   - **Other Deductions:** Loans, advances, penalties
+   - **Net Salary:** Gross - all deductions
+3. Review calculations for accuracy
+4. Handle special cases:
+   - New joiners (pro-rated salary)
+   - Resignations (final settlement)
+   - Salary revisions
+   - One-time bonuses or deductions
+
+## 📄 Step 4: Generate Payslips
+
+1. Navigate to **[Payslips](/payslips)**
+2. Generate payslips for all employees
+3. Payslip includes:
+   - Employee details
+   - Salary period
+   - Attendance summary (days present, absent, leaves)
+   - Earnings breakdown
+   - Deductions breakdown
+   - Net pay amount
+   - Year-to-date totals
+4. Review for errors before distribution
+
+## 📤 Step 5: Distribution & Payment
+
+1. Get manager/HR approval for payroll
+2. Process bank transfers or payments
+3. Distribute payslips to employees:
+   - Email notifications
+   - Download from portal
+4. Maintain payment records:
+   - Bank transaction IDs
+   - Payment dates
+   - Payment method
+5. Archive for compliance and audits
+
+## 📊 Reports & Compliance
+
+### Generate Reports
+• Monthly payroll register
+• Tax deduction certificates
+• Provident fund statements
+• Salary revision reports
+• Department-wise salary analysis
+• Cost center allocation
+
+### Compliance
+• Maintain statutory records
+• File tax returns
+• Submit PF and ESI returns
+• Generate Form 16 for employees
+• Audit trail for all changes
+
+## 💡 Best Practices
+
+• Set up automated attendance integration
+• Define clear salary policies
+• Review payroll before processing
+• Maintain backup of all records
+• Communicate payroll schedule to employees
+• Handle queries promptly
+• Ensure data security and confidentiality
+
+## 🔄 Monthly Payroll Cycle
+
+1. **Day 1-25:** Track attendance daily
+2. **Day 25:** Freeze attendance for the month
+3. **Day 26-27:** Process leave applications
+4. **Day 28:** Calculate payroll
+5. **Day 29:** Review and get approvals
+6. **Day 30/1:** Generate payslips
+7. **Day 2-3:** Process payments
+8. **Day 4-5:** Distribute payslips and handle queries`,
         suggestions: [
           'How do I set up salary structures?',
           'Tell me about attendance tracking',
           'How are leaves handled in payroll?'
-        ]
+        ],
+        relatedModules
       };
     }
 
     return {
-      content: `I can explain various workflows in the system:\n\n**Available Workflows:**\n• Recruitment & Hiring\n• Employee Onboarding\n• Leave Management\n• Payroll Processing\n• Performance Review Cycle\n• Learning & Development\n\nWhich workflow would you like to understand?`,
+      content: `I can explain various workflows in the system:\n\n**Available Workflows:**\n• **Recruitment & Hiring** - Complete hiring process from job posting to onboarding\n• **Employee Onboarding** - Setting up new employees in the system\n• **Leave Management** - Leave application and approval process\n• **Payroll Processing** - Monthly salary calculation and distribution\n• **Performance Review Cycle** - Goal setting to review completion\n• **Learning & Development** - Training and skill development\n\nWhich workflow would you like to understand?`,
       suggestions: [
         'Explain the recruitment workflow',
-        'How does payroll processing work?',
-        'Tell me about the performance review process'
+        'Tell me about payroll',
+        'How does performance review work?'
       ]
     };
   }
@@ -353,7 +763,7 @@ export class ChatService {
     if (relevantModules.length > 0) {
       const moduleList = relevantModules
         .slice(0, 3)
-        .map(m => `• **${m.name}** (/${m.path}) - ${m.description}`)
+        .map(m => `• **[${m.name}](${m.path})** - ${m.description}`)
         .join('\n');
 
       return {
@@ -363,12 +773,12 @@ export class ChatService {
     }
 
     return {
-      content: `I'm here to help you navigate and understand the HRMS system. You can ask me about:\n\n• **Modules** - What each module does and its features\n• **Workflows** - How to complete specific processes\n• **Navigation** - Where to find specific functionality\n• **Features** - What capabilities are available\n\nTry asking something like "Tell me about employee management" or "How do I process payroll?"`,
+      content: `I'm here to help you navigate and understand the HRMS system. You can ask me about:\n\n• **Modules** - What each module does and its features\n• **Workflows** - How to complete specific processes\n• **Navigation** - Where to find specific functionality\n• **Features** - What capabilities are available\n\nTry asking something like:\n• "What modules are available?"\n• "How do I manage employees?"\n• "Explain the recruitment process"\n• "Tell me about payroll"`,
       suggestions: [
         'What modules are available?',
         'How do I manage employees?',
         'Explain the recruitment process',
-        'Show me payroll features'
+        'Tell me about payroll'
       ]
     };
   }

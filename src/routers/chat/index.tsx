@@ -104,9 +104,9 @@ const Chat: FC = () => {
   // We only want this to run once on mount, not when handleSendMessage changes
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)]">
+    <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden">
       {/* Header */}
-      <Card className="p-4 mb-4 bg-gradient-to-r from-primary/10 to-primary/5">
+      <Card className="flex-shrink-0 p-4 mb-4 bg-gradient-to-r from-primary/10 to-primary/5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className="p-2 bg-primary rounded-lg flex-shrink-0">
@@ -181,7 +181,7 @@ const Chat: FC = () => {
 
       {/* Chat Interface */}
       <Card className="flex-1 flex overflow-hidden min-h-0">
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <MessageList
             messages={messages}
             isLoading={isLoading}
