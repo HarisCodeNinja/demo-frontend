@@ -16,6 +16,12 @@ export const defaultMenus: MenuItem[] = [
     icon: LucideIcons.LayoutDashboard,
   },
   {
+    key: '/chat',
+    label: 'AI Assistant',
+    scope: ['user:admin', 'user:hr', 'user:manager', 'user:employee'],
+    icon: LucideIcons.MessageSquare,
+  },
+  {
     key: '/users',
     label: 'Users',
     scope: ['user:admin', 'user:hr'],

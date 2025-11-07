@@ -46,6 +46,11 @@ export const defaultRoutes: CustomRoutes[] = [
     component: React.lazy(() => import('@/routers/candidate-skill')),
   },
   {
+    key: 'chat',
+    path: '/chat',
+    component: React.lazy(() => import('@/routers/chat')),
+  },
+  {
     key: 'competency',
     path: '/competencies',
     component: React.lazy(() => import('@/routers/competency')),
