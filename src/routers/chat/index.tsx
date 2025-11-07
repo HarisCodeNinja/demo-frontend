@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo, type FC } from 'react';
+import { useState, useEffect, useCallback, memo, type FC, Fragment } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageList } from './components/MessageList';
@@ -20,12 +20,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 
-const QUICK_START_SUGGESTIONS = [
-  'What modules are available?',
-  'How do I manage employees?',
-  'Explain the recruitment process',
-  'Tell me about payroll',
-] as const;
+const QUICK_START_SUGGESTIONS = ['What modules are available?', 'How do I manage employees?', 'Explain the recruitment process', 'Tell me about payroll'] as const;
 
 interface QuickStartButtonProps {
   readonly suggestion: string;
@@ -38,12 +33,7 @@ const QuickStartButton = memo<QuickStartButtonProps>(({ suggestion, onClick }) =
   }, [suggestion, onClick]);
 
   return (
-    <Button
-      variant="secondary"
-      size="sm"
-      onClick={handleClick}
-      type="button"
-    >
+    <Button variant="secondary" size="sm" onClick={handleClick} type="button">
       {suggestion}
     </Button>
   );
@@ -63,7 +53,7 @@ const Chat: FC = () => {
 
     try {
       const response = await chatService.sendMessage({
-        message: message.trim()
+        message: message.trim(),
       });
 
       // Update messages from service history
@@ -89,9 +79,12 @@ const Chat: FC = () => {
     toast.success('Chat history cleared');
   }, []);
 
-  const handleModuleClick = useCallback((module: IModuleInfo) => {
-    handleSendMessage(`Tell me more about ${module.name}`);
-  }, [handleSendMessage]);
+  const handleModuleClick = useCallback(
+    (module: IModuleInfo) => {
+      handleSendMessage(`Tell me more about ${module.name}`);
+    },
+    [handleSendMessage],
+  );
 
   const handleExploreModulesClick = useCallback(() => {
     handleSendMessage('What modules are available?');
@@ -105,57 +98,40 @@ const Chat: FC = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden">
-      {/* Header */}
-      <Card className="flex-shrink-0 p-4 mb-4 bg-gradient-to-r from-primary/10 to-primary/5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <div className="p-2 bg-primary rounded-lg flex-shrink-0">
-              <Sparkles className="w-6 h-6 text-primary-foreground" aria-hidden="true" />
+      {/* Header - Compact */}
+      <Card className="flex-shrink-0 p-2.5 mb-3 bg-gradient-to-r from-primary/10 to-primary/5 border-none shadow-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            <div className="p-1.5 bg-primary rounded-lg flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-primary-foreground" aria-hidden="true" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold mb-1">AI Assistant</h1>
-              <p className="text-sm text-muted-foreground">
-                Your intelligent guide to the HRMS system. Ask me anything about modules, features, and workflows.
-              </p>
+              <h1 className="text-lg font-bold leading-tight">AI Assistant</h1>
+              <p className="text-xs text-muted-foreground leading-tight">Your intelligent guide to the HRMS system</p>
             </div>
           </div>
 
-          <div className="flex gap-2 flex-shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExploreModulesClick}
-              type="button"
-              disabled={isLoading}
-            >
-              <BookOpen className="w-4 h-4 mr-2" aria-hidden="true" />
-              Explore Modules
+          <div className="flex gap-1.5 flex-shrink-0">
+            <Button variant="outline" size="sm" onClick={handleExploreModulesClick} type="button" disabled={isLoading} className="h-8 text-xs">
+              <BookOpen className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
+              Explore
             </Button>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={messages.length === 0}
-                  type="button"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
-                  Clear Chat
+                <Button variant="outline" size="sm" disabled={messages.length === 0} type="button" className="h-8 text-xs">
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
+                  Clear
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clear chat history?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will remove all messages from the current conversation. This action cannot be undone.
-                  </AlertDialogDescription>
+                  <AlertDialogDescription>This will remove all messages from the current conversation. This action cannot be undone.</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleClearChat}>
-                    Clear
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={handleClearChat}>Clear</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -164,39 +140,30 @@ const Chat: FC = () => {
 
         {/* Quick Start - Show only when no messages */}
         {messages.length === 0 && !isLoading && (
-          <div className="mt-4 pt-4 border-t">
-            <p className="text-sm font-medium mb-2">Quick Start:</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-2.5 pt-2.5 border-t">
+            <p className="text-xs font-medium mb-1.5">Quick Start:</p>
+            <div className="flex flex-wrap gap-1.5">
               {QUICK_START_SUGGESTIONS.map((suggestion) => (
-                <QuickStartButton
-                  key={suggestion}
-                  suggestion={suggestion}
-                  onClick={handleSendMessage}
-                />
+                <QuickStartButton key={suggestion} suggestion={suggestion} onClick={handleSendMessage} />
               ))}
             </div>
           </div>
         )}
       </Card>
 
-      {/* Chat Interface */}
-      <Card className="flex-1 flex overflow-hidden min-h-0">
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <MessageList
-            messages={messages}
-            isLoading={isLoading}
-            onSuggestionClick={handleSendMessage}
-          />
-          <MessageInput
-            onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-          />
+      {/* Related Modules - Compact */}
+      {relatedModules.length > 0 && (
+        <div className="mb-2">
+          <ModuleSidebar modules={relatedModules} onModuleClick={handleModuleClick} />
         </div>
+      )}
 
-        <ModuleSidebar
-          modules={relatedModules}
-          onModuleClick={handleModuleClick}
-        />
+      {/* Chat Interface - Maximum space */}
+      <Card className="flex-1 flex overflow-hidden min-h-0 border-none shadow-sm">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <MessageList messages={messages} isLoading={isLoading} onSuggestionClick={handleSendMessage} />
+          <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+        </div>
       </Card>
     </div>
   );

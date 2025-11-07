@@ -9,11 +9,7 @@ interface MessageInputProps {
   readonly placeholder?: string;
 }
 
-export const MessageInput = memo<MessageInputProps>(({
-  onSendMessage,
-  isLoading = false,
-  placeholder = 'Ask me anything about the system...'
-}) => {
+export const MessageInput = memo<MessageInputProps>(({ onSendMessage, isLoading = false, placeholder = 'Ask me anything about the system...' }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -32,12 +28,15 @@ export const MessageInput = memo<MessageInputProps>(({
     }
   }, [message, isLoading, onSendMessage, resetTextareaHeight]);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  }, [handleSend]);
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    },
+    [handleSend],
+  );
 
   const handleInput = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -50,7 +49,7 @@ export const MessageInput = memo<MessageInputProps>(({
   const isMessageEmpty = !message.trim();
 
   return (
-    <div className="border-t p-4 bg-background">
+    <div className="border-t px-3 pt-3 pb-2 bg-background">
       <div className="flex gap-2 items-end">
         <Textarea
           ref={textareaRef}
@@ -59,7 +58,7 @@ export const MessageInput = memo<MessageInputProps>(({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={isLoading}
-          className="min-h-[60px] max-h-[200px] resize-none"
+          className="min-h-[48px] max-h-[180px] resize-none text-sm"
           rows={1}
           aria-label="Message input"
           autoComplete="off"
@@ -67,22 +66,11 @@ export const MessageInput = memo<MessageInputProps>(({
           autoCapitalize="off"
           spellCheck="true"
         />
-        <Button
-          onClick={handleSend}
-          disabled={isMessageEmpty || isLoading}
-          size="icon"
-          className="h-[60px] w-[60px] flex-shrink-0"
-          aria-label="Send message"
-          type="button"
-        >
-          {isLoading ? (
-            <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-          ) : (
-            <Send className="w-5 h-5" aria-hidden="true" />
-          )}
+        <Button onClick={handleSend} disabled={isMessageEmpty || isLoading} size="icon" className="h-[48px] w-[48px] flex-shrink-0" aria-label="Send message" type="button">
+          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : <Send className="w-4 h-4" aria-hidden="true" />}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground mt-2" role="note">
+      <p className="text-[10px] text-muted-foreground mt-1.5 leading-tight" role="note">
         Press Enter to send, Shift+Enter for new line
       </p>
     </div>
