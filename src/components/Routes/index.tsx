@@ -71,13 +71,29 @@ const AppRoutes: React.FC<AppProps> = ({ doc }) => {
     );
   };
 
-  return (
-    <Routes>
-      {user && isLoggedIn && user.scope.some((role: string) => defaultAreaAccess.includes(role)) && renderAreaRoutes('default')}
-
-      {!isLoggedIn && renderAreaRoutes('public')}
-    </Routes>
+  const loggedInOrder = (
+    <React.Fragment>
+      {renderAreaRoutes('default')}
+      {renderAreaRoutes('public')}
+    </React.Fragment>
   );
+
+  const loggedOutOrder = (
+    <React.Fragment>
+      {renderAreaRoutes('public')}
+      {renderAreaRoutes('default')}
+    </React.Fragment>
+  );
+
+  return <Routes>{isLoggedIn ? loggedInOrder : loggedOutOrder}</Routes>;
+
+  // return (
+  //   <Routes>
+  //     {user && isLoggedIn && user.scope.some((role: string) => defaultAreaAccess.includes(role)) && renderAreaRoutes('default')}
+
+  //     {!isLoggedIn && renderAreaRoutes('public')}
+  //   </Routes>
+  // );
 };
 
 export default AppRoutes;
