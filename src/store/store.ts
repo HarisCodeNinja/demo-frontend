@@ -11,7 +11,7 @@ const persistConfig = {
 	key: PERSIST_STORE_NAME,
 	keyPrefix: '',
 	storage,
-	whitelist: ['session', 'tableConfiguration']
+	whitelist: ['session', 'tableConfiguration', 'chat']
 }
 
 const store = configureStore({

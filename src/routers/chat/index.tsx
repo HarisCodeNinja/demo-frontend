@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo, type FC, Fragment } from 'react';
+import { useState, useEffect, useCallback, memo, type FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageList } from './components/MessageList';
@@ -19,6 +19,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setMessages, setRelatedModules, clearChat } from '@/store/slice/chatSlice';
 
 const QUICK_START_SUGGESTIONS = ['What modules are available?', 'How do I manage employees?', 'Explain the recruitment process', 'Tell me about payroll'] as const;
 
@@ -42,8 +44,9 @@ const QuickStartButton = memo<QuickStartButtonProps>(({ suggestion, onClick }) =
 QuickStartButton.displayName = 'QuickStartButton';
 
 const Chat: FC = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [relatedModules, setRelatedModules] = useState<IModuleInfo[]>([]);
+  const dispatch = useAppDispatch();
+  const messages = useAppSelector((state) => state.chat.messages);
+  const relatedModules = useAppSelector((state) => state.chat.relatedModules);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendMessage = useCallback(async (message: string) => {
@@ -56,12 +59,12 @@ const Chat: FC = () => {
         message: message.trim(),
       });
 
-      // Update messages from service history
-      setMessages([...chatService.getHistory()]);
+      // Update messages in Redux from service history
+      dispatch(setMessages([...chatService.getHistory()]));
 
       // Update related modules if any
       if (response.relatedModules && response.relatedModules.length > 0) {
-        setRelatedModules(response.relatedModules);
+        dispatch(setRelatedModules(response.relatedModules));
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -70,14 +73,13 @@ const Chat: FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dispatch]);
 
   const handleClearChat = useCallback(() => {
     chatService.clearHistory();
-    setMessages([]);
-    setRelatedModules([]);
+    dispatch(clearChat());
     toast.success('Chat history cleared');
-  }, []);
+  }, [dispatch]);
 
   const handleModuleClick = useCallback(
     (module: IModuleInfo) => {
@@ -90,11 +92,26 @@ const Chat: FC = () => {
     handleSendMessage('What modules are available?');
   }, [handleSendMessage]);
 
-  // Send initial greeting on mount
+  // Sync Redux state with chat service on mount
   useEffect(() => {
-    handleSendMessage('Hello');
+    // If there are persisted messages in Redux, restore them to the service
+    if (messages.length > 0) {
+      // Restore messages to service
+      chatService.clearHistory();
+      messages.forEach((msg: IMessage) => {
+        // Rebuild service history from Redux
+        chatService.getHistory().push(msg);
+      });
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  // We only want this to run once on mount, not when handleSendMessage changes
+  // Only run once on mount
+
+  // Clear chat service when user logs out (when Redux state is cleared)
+  useEffect(() => {
+    if (messages.length === 0) {
+      chatService.clearHistory();
+    }
+  }, [messages.length]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] overflow-hidden">
