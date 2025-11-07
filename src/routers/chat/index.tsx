@@ -22,7 +22,12 @@ import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setMessages, setRelatedModules, clearChat } from '@/store/slice/chatSlice';
 
-const QUICK_START_SUGGESTIONS = ['What modules are available?', 'How do I manage employees?', 'Explain the recruitment process', 'Tell me about payroll'] as const;
+const QUICK_START_SUGGESTIONS = [
+  'Show me the dashboard',
+  'Give me today\'s attendance summary',
+  'Show employees with missing documents',
+  'Show recruitment pipeline'
+] as const;
 
 interface QuickStartButtonProps {
   readonly suggestion: string;

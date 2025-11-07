@@ -1,7 +1,9 @@
 import { IMessage, IChatRequest, IChatResponse, IModuleInfo } from './interface';
 import { systemModules, findModulesByKeyword, getModuleByPath, getRelatedModules } from './moduleContext';
+import { shouldUseHyperApi, routeHyperQuery } from './hyperQueryRouter';
+import { formatHyperResponse } from './hyperFormatters';
 
-// MCP-like intelligent response generator
+// MCP-like intelligent response generator with HYPER API integration
 export class ChatService {
   private conversationHistory: IMessage[] = [];
 
@@ -43,6 +45,76 @@ export class ChatService {
     moduleContext?: string
   ): Promise<{ content: string; suggestions?: string[]; relatedModules?: IModuleInfo[] }> {
     const lowerQuery = query.toLowerCase();
+
+    // ============================================================================
+    // HYPER API Integration - Check if query should use real backend data
+    // ============================================================================
+    console.log('[HYPER] Checking query:', query);
+    console.log('[HYPER] Should use HYPER API:', shouldUseHyperApi(query));
+
+    if (shouldUseHyperApi(query)) {
+      try {
+        console.log('[HYPER] Routing query to endpoint...');
+        const queryMatch = await routeHyperQuery(query);
+
+        console.log('[HYPER] Query match result:', {
+          matched: queryMatch.matched,
+          category: queryMatch.category,
+          params: queryMatch.params
+        });
+
+        if (queryMatch.matched) {
+          console.log('[HYPER] Calling API endpoint...');
+
+          // Call the HYPER API endpoint
+          const hyperResponse = await queryMatch.endpoint();
+
+          console.log('[HYPER] API response received:', {
+            hasData: !!hyperResponse.data,
+            message: hyperResponse.meta?.message
+          });
+
+          // Format the response into readable markdown
+          const formattedContent = formatHyperResponse(hyperResponse, queryMatch.category);
+
+          // Generate contextual suggestions based on category
+          const suggestions = this.generateHyperSuggestions(queryMatch.category);
+
+          return {
+            content: formattedContent,
+            suggestions,
+            relatedModules: []
+          };
+        } else {
+          console.log('[HYPER] No matching endpoint found for query');
+        }
+      } catch (error) {
+        console.error('[HYPER] Error calling HYPER API:', error);
+
+        // Check if it's a network error
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as any;
+          console.error('[HYPER] API Error Details:', {
+            status: axiosError.response?.status,
+            statusText: axiosError.response?.statusText,
+            data: axiosError.response?.data,
+            url: axiosError.config?.url
+          });
+        }
+
+        // Fall through to static responses if API fails
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return {
+          content: `⚠️ I encountered an issue fetching real-time data: ${errorMessage}\n\n**Debug Info:**\n- Query: "${query}"\n- Category: Would route to HYPER API\n- Error: ${error instanceof Error ? error.stack : String(error)}\n\n**Possible causes:**\n1. Backend server might not be running\n2. HYPER endpoints might not be implemented yet\n3. Authentication issue\n4. Network/CORS issue\n\nPlease check the browser console for more details.`,
+          suggestions: [
+            'Show me the dashboard',
+            'What modules are available?',
+            'How do I manage employees?'
+          ],
+          relatedModules: []
+        };
+      }
+    }
 
     // Intent detection - order matters!
     if (this.isGreeting(lowerQuery)) {
@@ -801,6 +873,43 @@ Complete guide to processing employee payroll:
 
   private generateId(): string {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  // Generate contextual suggestions based on HYPER API category
+  private generateHyperSuggestions(category: string): string[] {
+    const suggestionMap: Record<string, string[]> = {
+      employee: [
+        'Show employees with missing documents',
+        'Who hasn\'t completed onboarding?',
+        'Show new hires this month',
+        'Flag role mismatches'
+      ],
+      recruitment: [
+        'Show recruitment pipeline',
+        'Show interviews pending feedback',
+        'Summarize hiring funnel',
+        'Show overdue interviews'
+      ],
+      attendance: [
+        'Give me today\'s attendance summary',
+        'Show late comers',
+        'Detect attendance anomalies',
+        'Show absentee patterns'
+      ],
+      dashboard: [
+        'Give me department-wise headcount',
+        'Show open positions',
+        'Who joined this week?',
+        'Show leave overview'
+      ],
+      none: [
+        'What modules are available?',
+        'Show me the dashboard',
+        'How do I manage employees?'
+      ]
+    };
+
+    return suggestionMap[category] || suggestionMap.none;
   }
 
   // Get conversation history
